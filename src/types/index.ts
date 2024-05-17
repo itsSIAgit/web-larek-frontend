@@ -21,13 +21,14 @@ export interface Catalog {
 //Интерфейс данных корзины
 export interface IBasket {
   events: IEvents;
-  items: string[];
-  total: number | null;
-  add (id: string): void;
+  items: IProduct[];
+  add (product: IProduct): void;
   remove (id: string): void;
   purchaseOpportunity (): boolean;
   haveProduct (id: string): boolean;
   goodsCount (): number;
+  total (): number;
+  clear (): void;
 }
 
 //Интерфейс данных для оформления покупки
