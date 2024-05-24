@@ -85,7 +85,7 @@ export interface IProduct {
 
 Каталог товаров
 ```
-export interface Catalog {
+export interface ICatalog {
   events: IEvents;
   items: IProduct[];
   setGoods(items: IProduct[]): void;
