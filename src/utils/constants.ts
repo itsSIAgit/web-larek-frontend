@@ -18,5 +18,6 @@ export const settings = {
   // ticketTemplate: 'ticket',
   // orderTemplate: 'order',
   // successTemplate: 'success',
-  basketStorageKey: 'goods'
+  basketStorageKey: 'goods',
+  infoStorageKey: 'info'
 };

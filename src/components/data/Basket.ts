@@ -6,20 +6,20 @@ import { IEvents } from "../base/events";
  */
 export class Basket implements IBasket {
   protected events: IEvents;
+  protected storageKey: string;
   protected _items: IProduct[] = [];
-  protected _storageKey: string;
 
   constructor(events: IEvents, key: string) {
     this.events = events;
-    this._storageKey = key;
+    this.storageKey = key;
   }
 
   /**
    * Сохранить корзину в локальное хранилище
    */
-  save() {
+  save(): void {
     localStorage.setItem(
-      this._storageKey,
+      this.storageKey,
       JSON.stringify(this._items)
     );
   }
@@ -27,14 +27,11 @@ export class Basket implements IBasket {
   /**
    * Загрузить корзину из локального хранилища
    */
-  load() {
+  load(): void {
     try {
-      const rawData: string = localStorage.getItem(this._storageKey);
+      const rawData: string = localStorage.getItem(this.storageKey);
       if (rawData) {
-        const items: IProduct[] = JSON.parse(rawData);
-        for (const item of items) {
-          this.add(item);
-        }
+        this._items = JSON.parse(rawData) as IProduct[];
       }
     } catch (err) {
       console.warn(`Не удалось прочитать корзину из localStorage`, err);

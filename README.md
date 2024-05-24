@@ -84,37 +84,30 @@ export interface IProduct {
 }
 ```
 
-Каталог товаров
+Допустимые способы оплаты
 ```
-export interface ICatalog {
-  setGoods(items: IProduct[]): void;
-  getProduct(id: string): IProduct | null;
-}
-```
-
-Данные корзины
-```
-export interface IBasket {
-  save(): void;
-  load(): void;
-  add (product: IProduct): void;
-  remove (id: string): void;
-  purchaseOpportunity (): boolean;
-  haveProduct (id: string): boolean;
-  goodsCount (): number;
-  total (): number;
-  clear (): void;
-}
+export type TPayment = null | 'online' | 'physically';
 ```
 
 Данные для оформления покупки
 ```
-export interface IPurchaseInfo {
-  events: IEvents;
-  payment: null | 'online' | 'physically';
+export type TPurchaseData = {
+  payment: TPayment;
   address: string;
   email: string;
   phone: string;
+}
+```
+
+Данные отправляемые на сервер при покупке
+```
+export type TApiPostData = {
+  payment: 'online' | 'physically',
+  email: string,
+  phone: string,
+  address: string,
+  total: number,
+  items: string[]
 }
 ```
 
@@ -170,12 +163,12 @@ export interface IPurchaseInfo {
 
 #### Класс Basket
 Отвечает за хранение содержимого корзины.\
-Конструктор класса принимает инстант брокера событий, и ключ локального хранилища, для того чтобы не терять корзину при перезагрузке страницы
+Конструктор класса принимает инстант брокера событий, и ключ локального хранилища, для того чтобы не терять корзину при перезагрузке страницы.
 
 Поля класса:
 - `events: IEvents` - экземпляр класса EventEmitter для инициации событий при изменении данных
+- `storageKey: string` - ключ локального хранилища корзины
 - `_items: IProduct[]` - массив продуктов в корзине
-- `_storageKey: string` - ключ локального хранилища корзины
 
 Методы класса:
 - `save()` - сохранить корзину в локальное хранилище
@@ -191,18 +184,21 @@ export interface IPurchaseInfo {
 
 #### Класс PurchaseInfo
 Отвечает за хранение данных покупателя.\
-Конструктор класса принимает инстант брокера событий.
+Конструктор класса принимает инстант брокера событий и ключ локального хранилища, для того чтобы не терять данные пользователя при перезагрузке страницы.
 
 Поля класса:
 - `events: IEvents` - экземпляр класса EventEmitter для инициации событий при изменении данных
-- `_payment: null | 'online' | 'physically'` - выбранный способ оплаты
-- `_address: string` - адрес покупателя
-- `_email: string` - почта покупателя
-- `_phone: string` - телефон покупателя
+- `infoKey: string` - ключ локального хранилища
+- `payment: TPayment` - выбранный способ оплаты
+- `address: string` - адрес покупателя
+- `email: string` - почта покупателя
+- `phone: string` - телефон покупателя
 
 Методы класса:
-- геттеры всех полей (поскольку проверка на валидность примитивная, ею занимается презентер)
-- сеттеры всех полей (вызывают события изменения данных)
+- `save()` - сохранить инфо в локальное хранилище
+- `load()` - загрузить инфо из локального хранилища
+- `setData(data: Partial<TPurchaseData>): void` - записывает значения полей и вызывает событие изменения данных
+- `getData(): TPurchaseData` - возвращает все данные для покупки
 
 
 ### Слой представления
@@ -399,10 +395,11 @@ export interface IPurchaseInfo {
 
 - `goods:changed` - изменение массива продуктов в каталоге
 - `basket:changed` - изменение массива продуктов в корзине
-- `infoPayment:changed` - изменение способа оплаты
+- `info:changed` - изменение дынных для покупки
+<!-- - `infoPayment:changed` - изменение способа оплаты
 - `infoAddress:changed` - изменение адреса
 - `infoEmail:changed` - изменение почты
-- `infoPhone:changed` - изменение телефона
+- `infoPhone:changed` - изменение телефона -->
 
 > События, возникающие при взаимодействии пользователя с интерфейсом\
 > (генерируются классами, отвечающими за представление)

@@ -1,5 +1,3 @@
-import { IEvents } from "../components/base/events";
-
 /**
  * Интерфейс данных одного продукта
  */
@@ -39,8 +37,22 @@ export interface IBasket {
  * Интерфейс данных для оформления покупки
  */
 export interface IPurchaseInfo {
-  events: IEvents;
-  payment: null | 'online' | 'physically';
+  save(): void;
+  load(): void;
+  setData(data: Partial<TPurchaseData>): void;
+  getData(): TPurchaseData;
+}
+
+/**
+ * Способы оплаты
+ */
+export type TPayment = null | 'online' | 'physically';
+
+/**
+ * Комплект данных для оплаты
+ */
+export type TPurchaseData = {
+  payment: TPayment;
   address: string;
   email: string;
   phone: string;

@@ -5,6 +5,7 @@ import { EventEmitter } from './components/base/events';
 import { ShopApi } from './components/connection/ShopApi';
 import { Catalog } from './components/data/Catalog';
 import { Basket } from './components/data/Basket';
+import { PurchaseInfo } from './components/data/PurchaseInfo';
 import './scss/styles.scss';
 
 const events = new EventEmitter();
@@ -12,6 +13,7 @@ const baseApi = new Api(API_URL);
 const api = new ShopApi(baseApi as IApi);
 const catalog = new Catalog(events);
 const basket = new Basket(events, settings.basketStorageKey);
+const info = new PurchaseInfo(events, settings.infoStorageKey)
 
 events.onAll(event => console.log(event));
 events.on('goods:changed', () => { console.log('goods:changed'); });
@@ -50,6 +52,30 @@ setTimeout(() => {
   basket.load();
   console.log(basket.items);
  }, 3000);
+
+console.log('info start')
+info.setData({
+  payment: 'online',
+  email: 'abc@abc.ru',
+  phone: '1-234-56-78',
+  address: 'Test Street'
+});
+info.save();
+console.log(info.getData());
+info.setData({
+  payment: null,
+  email: '',
+  phone: '',
+  address: ''
+});
+console.log(info.getData());
+setTimeout(() => { 
+  info.load();
+  console.log('info')
+  console.log(info.getData());
+ }, 4000);
+
+
 
 /*
 events.on('goods:changed', () => {
