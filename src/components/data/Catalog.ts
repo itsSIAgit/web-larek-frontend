@@ -16,7 +16,7 @@ export class Catalog implements ICatalog {
    * Записывает значения массива продуктов
    * и вызывает событие изменения массива каталога
    */
-  setGoods (items: IProduct[]): void {
+  setGoods(items: IProduct[]): void {
     if (items) {
       this._items = items;
       this.events.emit('goods:changed');
@@ -26,7 +26,7 @@ export class Catalog implements ICatalog {
   /**
    * Позволяет получить данные продукта по id
    */
-  getProduct (id: string): IProduct {
+  getProduct(id: string): IProduct {
     return this._items.find(item => item.id === id);
   }
 

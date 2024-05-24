@@ -8,5 +8,15 @@ export const API_URL = `${process.env.API_ORIGIN}/api/weblarek`;
 export const CDN_URL = `${process.env.API_ORIGIN}/content/weblarek`;
 
 export const settings = {
-
+  // cardTemplate: 'film-card',
+  // contentTemplate: 'film-info',
+  // modalHeaderTemplate: 'film-head',
+  // modalTemplate: 'modal',
+  // scheduleTemplate: 'schedule',
+  // placesTemplate: 'places',
+  // basketTemplate: 'basket',
+  // ticketTemplate: 'ticket',
+  // orderTemplate: 'order',
+  // successTemplate: 'success',
+  basketStorageKey: 'goods'
 };

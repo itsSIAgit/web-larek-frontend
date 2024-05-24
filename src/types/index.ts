@@ -24,8 +24,8 @@ export interface ICatalog {
  * Интерфейс данных корзины
  */
 export interface IBasket {
-  events: IEvents;
-  items: IProduct[];
+  save(): void;
+  load(): void;
   add(product: IProduct): void;
   remove(id: string): void;
   purchaseOpportunity(): boolean;

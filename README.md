@@ -95,8 +95,8 @@ export interface ICatalog {
 Данные корзины
 ```
 export interface IBasket {
-  events: IEvents;
-  items: IProduct[];
+  save(): void;
+  load(): void;
   add (product: IProduct): void;
   remove (id: string): void;
   purchaseOpportunity (): boolean;
@@ -170,11 +170,12 @@ export interface IPurchaseInfo {
 
 #### Класс Basket
 Отвечает за хранение содержимого корзины.\
-Конструктор класса принимает инстант брокера событий.
+Конструктор класса принимает инстант брокера событий, и ключ локального хранилища, для того чтобы не терять корзину при перезагрузке страницы
 
 Поля класса:
 - `events: IEvents` - экземпляр класса EventEmitter для инициации событий при изменении данных
 - `_items: IProduct[]` - массив продуктов в корзине
+- `_storageKey: string` - ключ локального хранилища корзины
 
 Методы класса:
 - `add (product: IProduct): void` - добавляет товар в массив корзины и вызывает событие изменения массива корзины
