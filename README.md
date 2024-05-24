@@ -14,6 +14,7 @@ https://github.com/itsSIAgit/web-larek-frontend.git
   - [Базовый код](#базовый-код)
     - [Класс Api](#класс-api)
     - [Класс EventEmitter](#класс-eventemitter)
+    <!-- - [Класс Component](#класс-component) -->
   - [Слой данных](#слой-данных)
     - [Класс Catalog](#класс-catalog)
     - [Класс Basket](#класс-basket)
@@ -86,10 +87,8 @@ export interface IProduct {
 Каталог товаров
 ```
 export interface ICatalog {
-  events: IEvents;
-  items: IProduct[];
   setGoods(items: IProduct[]): void;
-  getProduct(id: string): IProduct;
+  getProduct(id: string): IProduct | null;
 }
 ```
 
@@ -149,6 +148,10 @@ export interface IPurchaseInfo {
 - `trigger` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие
 
 
+#### Класс Component
+<!-- ! ====================== ЗАПОЛНИТЬ ======================== -->
+
+
 ### Слой данных
 Классы отвечают за хранение данных, используемых в приложении. Их изменение вызывает события в брокере.
 
@@ -162,7 +165,7 @@ export interface IPurchaseInfo {
 
 Методы класса:
 - `setGoods (items: IProduct[]): void` - записывает значения массива продуктов и вызывает событие изменения массива каталога
-- `getProduct (id: string): IProduct` - позволяет получить данные продукта по id
+- `getProduct (id: string): IProduct | null` - позволяет получить данные продукта по id
 - геттер items
 
 #### Класс Basket
@@ -362,7 +365,7 @@ export interface IPurchaseInfo {
 - `private _baseApi: IApi` - для экземпляра класса Api
 
 Методы класса:
-- `getGoods ()` - получает весь массив продуктов с сервера в формате IProduct[]
+- `getGoods ()` - получает весь массив продуктов с сервера в формате TApiGetResult
 - `getProduct (id: string)` - получает один продукт с сервера в формате IProduct
 - `makePurchase (data: TApiPostData)` - отправляет на сервер POST-запрос с данными для заказа
 

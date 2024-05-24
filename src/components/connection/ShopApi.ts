@@ -1,11 +1,19 @@
-import { IApi, IProduct, TApiPostData } from "../types";
+import { IApi, IProduct, TApiPostData } from "../../types";
+
+/**
+ * Тип данных получаемых с сервера
+ */
+type TApiGetResult = {
+  total: number,
+  items: IProduct[]
+}
 
 /**
  * Тип данных с сервера после успешной покупки
  */
 type TApiPostResult = {
-  id: string;
-  total: number;
+  id: string,
+  total: number
 }
 
 /**
@@ -19,23 +27,23 @@ export class ShopApi {
   }
 
   /**
-   * Получает весь массив продуктов с сервера в формате IProduct[]
+   * Получает весь массив продуктов с сервера в формате TApiGetResult
    */
-  getGoods(): Promise<IProduct[]> {
-    return this._baseApi.get<IProduct[]>('/product').then((items: IProduct[]) => items);
+  getGoods(): Promise<TApiGetResult> {
+    return this._baseApi.get<TApiGetResult>('/product');
   }
 
   /**
   * Получает один продукт с сервера в формате IProduct
   */
   getProduct(id: string): Promise<IProduct> {
-    return this._baseApi.get<IProduct>(`/product/${id}`).then((item: IProduct) => item);
+    return this._baseApi.get<IProduct>(`/product/${id}`);
   }
 
   /**
   * Отправляет на сервер POST-запрос, в формате TApiPostData, с данными для заказа
   */
   makePurchase (data: TApiPostData): Promise<TApiPostResult> {
-    return this._baseApi.post<TApiPostResult>('/order', data).then((res: TApiPostResult) => res);
+    return this._baseApi.post<TApiPostResult>('/order', data);
   }
 }

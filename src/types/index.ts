@@ -16,10 +16,8 @@ export interface IProduct {
  * Интерфейс каталога товаров
  */
 export interface ICatalog {
-  events: IEvents;
-  items: IProduct[];
   setGoods(items: IProduct[]): void;
-  getProduct(id: string): IProduct;
+  getProduct(id: string): IProduct | null;
 }
 
 /**
@@ -68,12 +66,12 @@ export type TApiPostMethods = 'POST';
  * Тип данных отправляемых на сервер при покупке
  */
 export type TApiPostData = {
-  payment: 'online' | 'physically';
-  email: string;
-  phone: string;
-  address: string;
-  total: number;
-  items: string[];
+  payment: 'online' | 'physically',
+  email: string,
+  phone: string,
+  address: string,
+  total: number,
+  items: string[]
 }
 
 /**
