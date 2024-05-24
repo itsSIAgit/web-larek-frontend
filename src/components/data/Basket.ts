@@ -14,6 +14,9 @@ export class Basket implements IBasket {
     this._storageKey = key;
   }
 
+  /**
+   * Сохранить корзину в локальное хранилище
+   */
   save() {
     localStorage.setItem(
       this._storageKey,
@@ -21,6 +24,9 @@ export class Basket implements IBasket {
     );
   }
 
+  /**
+   * Загрузить корзину из локального хранилища
+   */
   load() {
     try {
       const rawData: string = localStorage.getItem(this._storageKey);
