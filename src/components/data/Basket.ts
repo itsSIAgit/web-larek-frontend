@@ -32,6 +32,7 @@ export class Basket implements IBasket {
       const rawData: string = localStorage.getItem(this.storageKey);
       if (rawData) {
         this._items = JSON.parse(rawData) as IProduct[];
+        this.events.emit('basket:changed');
       }
     } catch (err) {
       console.warn(`Не удалось прочитать корзину из localStorage`, err);

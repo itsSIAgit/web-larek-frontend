@@ -38,6 +38,7 @@ export class PurchaseInfo implements IPurchaseInfo {
       const rawData: string = localStorage.getItem(this.infoKey);
       if (rawData) {
         this.purchaseData = JSON.parse(rawData) as TPurchaseData;
+        this.events.emit('info:changed');
       }
     } catch (err) {
       console.warn(`Не удалось прочитать инфо из localStorage`, err);

@@ -6,6 +6,7 @@ import { ShopApi } from './components/connection/ShopApi';
 import { Catalog } from './components/data/Catalog';
 import { Basket } from './components/data/Basket';
 import { PurchaseInfo } from './components/data/PurchaseInfo';
+import { Page } from './components/view/Page';
 import { Card } from './components/view/Card';
 import { cloneTemplate } from './utils/utils';
 import './scss/styles.scss';
@@ -16,29 +17,35 @@ const api = new ShopApi(baseApi as IApi);
 const catalog = new Catalog(events);
 const basket = new Basket(events, settings.basketStorageKey);
 const info = new PurchaseInfo(events, settings.infoStorageKey);
+const page = new Page(events);
 const cardCatalogTemplate = document.getElementById(settings.cardCatalogTemplate);
 const cardPreviewTemplate = document.getElementById(settings.cardPreviewTemplate);
 const cardBasketTemplate = document.getElementById(settings.cardBasketTemplate);
 
 events.onAll(event => console.log(event));
 events.on('goods:changed', () => {
-  console.log('goods:changed');
+  const galleryArr: HTMLElement[] = [];
   catalog.items.forEach(productData => {
     let { id, title, price, image, category } = productData;
     image = CDN_URL + image;
     const type = settings.typeSelector[category as keyof object];
     const data = { id, title, price, image, category, type };
     const card = new Card(events, cloneTemplate(cardCatalogTemplate as HTMLTemplateElement));
-    place.append(card.render(data));
+    galleryArr.push(card.render(data));
   })
+  page.render(galleryArr);
 });
-events.on('basket:changed', () => { console.log('basket:changed'); });
-const place = document.querySelector(settings.galleryClass);
+events.on('basket:changed', () => {
+  basket.save();
+  page.goodsCount = basket.goodsCount();
+});
 
 
 api.getGoods()
   .then(goods => {
     catalog.setGoods(goods.items as IProduct[]);
+    basket.load();
+    info.load();
 })
 .catch((err) => {
   console.error(err);
