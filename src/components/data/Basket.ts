@@ -2,7 +2,7 @@ import { IBasket, IProduct } from "../../types";
 import { IEvents } from "../base/events";
 
 /**
- * Отвечает за хранение содержимого корзины.\
+ * Отвечает за хранение содержимого корзины.
  */
 export class Basket implements IBasket {
   protected events: IEvents;

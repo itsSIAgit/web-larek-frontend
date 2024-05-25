@@ -19,7 +19,6 @@ type TCard = {
  */
 export class Card extends Component<TCard> {
   protected events: IEvents;
-  protected element: HTMLElement;
   protected _id: string;
   protected _title: HTMLElement;
   protected _price: HTMLElement;
@@ -33,15 +32,14 @@ export class Card extends Component<TCard> {
   constructor(events: IEvents, container: HTMLElement) {
     super(container);
     this.events = events;
-    this.element = container;
-    this._title = this.element.querySelector('.card__title');
-    this._price = this.element.querySelector('.card__price');
-    this._image = this.element.querySelector('.card__image');
-    this._category = this.element.querySelector('.card__category');
-    this._description = this.element.querySelector('.card__text');
-    this._position = this.element.querySelector('.basket__item-index');
-    this.buyButton = this.element.querySelector('.button');
-    this.deleteButton = this.element.querySelector('.basket__item-delete');
+    this._title = container.querySelector('.card__title');
+    this._price = container.querySelector('.card__price');
+    this._image = container.querySelector('.card__image');
+    this._category = container.querySelector('.card__category');
+    this._description = container.querySelector('.card__text');
+    this._position = container.querySelector('.basket__item-index');
+    this.buyButton = container.querySelector('.button');
+    this.deleteButton = container.querySelector('.basket__item-delete');
 
     //В зависимости от шаблона:
     //назначает слушателя на нажатие на карточку, кнопку покупки,
@@ -54,8 +52,8 @@ export class Card extends Component<TCard> {
       this.deleteButton
         .addEventListener('click', () => this.events.emit('card:delete', { data: this._id }));
     }
-    if (this.element.classList.contains('gallery__item')) {
-      this.element
+    if (container.classList.contains('gallery__item')) {
+      container
         .addEventListener('click', () => this.events.emit('big:open', { data: this._id }));
     }
   }
