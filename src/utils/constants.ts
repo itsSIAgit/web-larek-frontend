@@ -17,7 +17,6 @@ export const settings = {
   successTemplate: 'success',
   
   modalContainerId: 'modal-container',
-  galleryClass: '.gallery',
   
   typeSelector: {
     'софт-скил': 'card__category_soft',

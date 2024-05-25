@@ -10,6 +10,7 @@ import { Page } from './components/view/Page';
 import { Card } from './components/view/Card';
 import { cloneTemplate } from './utils/utils';
 import './scss/styles.scss';
+import { Popup } from './components/view/Popup';
 
 const events = new EventEmitter();
 const baseApi = new Api(API_URL);
@@ -18,6 +19,7 @@ const catalog = new Catalog(events);
 const basket = new Basket(events, settings.basketStorageKey);
 const info = new PurchaseInfo(events, settings.infoStorageKey);
 const page = new Page(events);
+const modal = new Popup(events, document.getElementById(settings.modalContainerId))
 const cardCatalogTemplate = document.getElementById(settings.cardCatalogTemplate);
 const cardPreviewTemplate = document.getElementById(settings.cardPreviewTemplate);
 const cardBasketTemplate = document.getElementById(settings.cardBasketTemplate);
@@ -29,9 +31,9 @@ events.on('goods:changed', () => {
     let { id, title, price, image, category } = productData;
     image = CDN_URL + image;
     const type = settings.typeSelector[category as keyof object];
-    const data = { id, title, price, image, category, type };
+    const cardData = { id, title, price, image, category, type };
     const card = new Card(events, cloneTemplate(cardCatalogTemplate as HTMLTemplateElement));
-    galleryArr.push(card.render(data));
+    galleryArr.push(card.render(cardData));
   })
   page.render(galleryArr);
 });
@@ -39,6 +41,32 @@ events.on('basket:changed', () => {
   basket.save();
   page.goodsCount = basket.goodsCount();
 });
+events.on('info:changed', () => {
+  info.save();
+});
+
+events.on('big:open', (data: { id: string }) => {
+  const card = new Card(events, cloneTemplate(cardPreviewTemplate as HTMLTemplateElement));
+  const _id = data.id;
+  let { id, title, price, image, category, description } = catalog.getProduct(_id);
+  image = CDN_URL + image;
+  const type = settings.typeSelector[category as keyof object];
+  const cardData = { id, title, price, image, category, type, description };
+  modal.render({ content: card.render(cardData) });
+});
+
+// Блокировка прокрутки страницы если открыто окно
+events.on('modal:open', () => {
+  page.locked = true;
+});
+
+// Разблокировка
+events.on('modal:close', () => {
+  page.locked = false;
+});
+
+// events.on('buy:click', () => {});
+// events.on('card:delete', () => {});
 
 
 api.getGoods()

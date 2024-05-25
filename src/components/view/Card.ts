@@ -1,15 +1,15 @@
 import { Component } from "../base/Component";
 import { IEvents } from "../base/events";
 
-type TCard = {
-  title: string,
-  price: number,
-  image: string,
-  category: string,
-  type: string,
-  description: string,
-  position: number,
-  inBasket: boolean
+interface TCard {
+  title: string;
+  price: number;
+  image: string;
+  category: string;
+  type: string;
+  description: string;
+  position: number;
+  inBasket: boolean;
 }
 
 /**
@@ -46,15 +46,15 @@ export class Card extends Component<TCard> {
     //кнопку удаления товара из корзины
     if (this.buyButton) {
       this.buyButton
-        .addEventListener('click', () => this.events.emit('buy:click', { data: this._id }));
+        .addEventListener('click', () => this.events.emit('buy:click', { id: this._id }));
     }
     if (this.deleteButton) {
       this.deleteButton
-        .addEventListener('click', () => this.events.emit('card:delete', { data: this._id }));
+        .addEventListener('click', () => this.events.emit('card:delete', { id: this._id }));
     }
     if (container.classList.contains('gallery__item')) {
       container
-        .addEventListener('click', () => this.events.emit('big:open', { data: this._id }));
+        .addEventListener('click', () => this.events.emit('big:open', { id: this._id }));
     }
   }
 

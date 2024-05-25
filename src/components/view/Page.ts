@@ -11,13 +11,14 @@ export class Page {
   protected events: IEvents;
   protected containerCard: HTMLElement;
   protected basketButton: HTMLButtonElement;
+  protected _wrapper: HTMLElement;
   protected _count: HTMLElement;
   
   constructor(events: IEvents) {
     this.events = events;
-    const page: HTMLElement = document.querySelector('.page');
-    this.containerCard = ensureElement<HTMLElement>('.gallery', page);
-    this.basketButton = ensureElement<HTMLButtonElement>('.header__basket', page);
+    this.containerCard = ensureElement<HTMLElement>('.gallery');
+    this.basketButton = ensureElement<HTMLButtonElement>('.header__basket');
+    this._wrapper = ensureElement<HTMLElement>('.page__wrapper');
     this._count = ensureElement<HTMLElement>('.header__basket-counter', this.basketButton);
 
     this.basketButton.addEventListener('click', () => events.emit('basket:open'));
@@ -36,5 +37,16 @@ export class Page {
    */
   set goodsCount(data: number) {
     this._count.textContent = String(data);
+  }
+
+  /**
+   * Блокировка прокрутки страницы
+   */
+  set locked(value: boolean) {
+    if (value) {
+      this._wrapper.classList.add('page__wrapper_locked');
+    } else {
+      this._wrapper.classList.remove('page__wrapper_locked');
+    }
   }
 }
