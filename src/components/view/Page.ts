@@ -11,14 +11,12 @@ export class Page {
   protected events: IEvents;
   protected containerCard: HTMLElement;
   protected basketButton: HTMLButtonElement;
-  protected _wrapper: HTMLElement;
   protected _count: HTMLElement;
   
   constructor(events: IEvents) {
     this.events = events;
     this.containerCard = ensureElement<HTMLElement>('.gallery');
     this.basketButton = ensureElement<HTMLButtonElement>('.header__basket');
-    this._wrapper = ensureElement<HTMLElement>('.page__wrapper');
     this._count = ensureElement<HTMLElement>('.header__basket-counter', this.basketButton);
 
     this.basketButton.addEventListener('click', () => events.emit('basket:open'));
@@ -40,13 +38,23 @@ export class Page {
   }
 
   /**
-   * Блокировка прокрутки страницы
+   * Блокировка прокрутки страницы.\
+   * Реализация через блокировку скролла,
+   * т.к. через класс страница дергается в начало.
    */
   set locked(value: boolean) {
     if (value) {
-      this._wrapper.classList.add('page__wrapper_locked');
+      const scrollTop =
+        window.scrollY ||
+        document.documentElement.scrollTop;
+      const scrollLeft =
+        window.scrollX ||
+        document.documentElement.scrollLeft;
+      window.onscroll = function () {
+        window.scrollTo(scrollLeft, scrollTop);
+      };
     } else {
-      this._wrapper.classList.remove('page__wrapper_locked');
+      window.onscroll = function () {};
     }
   }
 }

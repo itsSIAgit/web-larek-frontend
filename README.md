@@ -252,7 +252,6 @@ export type TApiPostData = {
 - `events: IEvents` - экземпляр класса EventEmitter
 - `containerCard: HTMLElement` - место куда складывать карточки товаров
 - `basketButton: HTMLButtonElement` - кнопка корзины на главной странице
-- `_wrapper: HTMLElement` - тело страницы (для блокировки прокрутки)
 - `_count: HTMLElement` - поле с количеством товаров в корзине
 
 Методы класса:

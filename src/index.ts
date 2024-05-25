@@ -24,16 +24,23 @@ const cardCatalogTemplate = document.getElementById(settings.cardCatalogTemplate
 const cardPreviewTemplate = document.getElementById(settings.cardPreviewTemplate);
 const cardBasketTemplate = document.getElementById(settings.cardBasketTemplate);
 
+function cardDataBuilder(data: IProduct, preset: 'gallery' | 'big' | 'basket') {
+  let { id, title, price, image, category, description } = data;
+  const type = settings.typeSelector[category as keyof object];
+  image = CDN_URL + image;
+  switch (preset) {
+    case 'gallery': return { id, title, price, image, category, type };
+    case 'big': return { id, title, price, image, category, type, description };
+    case 'basket': return { id, title, price };
+  }
+}
+
 events.onAll(event => console.log(event));
 events.on('goods:changed', () => {
   const galleryArr: HTMLElement[] = [];
   catalog.items.forEach(productData => {
-    let { id, title, price, image, category } = productData;
-    image = CDN_URL + image;
-    const type = settings.typeSelector[category as keyof object];
-    const cardData = { id, title, price, image, category, type };
     const card = new Card(events, cloneTemplate(cardCatalogTemplate as HTMLTemplateElement));
-    galleryArr.push(card.render(cardData));
+    galleryArr.push(card.render(cardDataBuilder(productData, 'gallery')));
   })
   page.render(galleryArr);
 });
@@ -47,12 +54,7 @@ events.on('info:changed', () => {
 
 events.on('big:open', (data: { id: string }) => {
   const card = new Card(events, cloneTemplate(cardPreviewTemplate as HTMLTemplateElement));
-  const _id = data.id;
-  let { id, title, price, image, category, description } = catalog.getProduct(_id);
-  image = CDN_URL + image;
-  const type = settings.typeSelector[category as keyof object];
-  const cardData = { id, title, price, image, category, type, description };
-  modal.render({ content: card.render(cardData) });
+  modal.render({ content: card.render(cardDataBuilder(catalog.getProduct(data.id), 'big')) });
 });
 
 // Блокировка прокрутки страницы если открыто окно
