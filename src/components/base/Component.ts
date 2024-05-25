@@ -1,5 +1,5 @@
 /**
- * Базовый компонент
+ * Базовый компонент view
  */
 export abstract class Component<T> {
     protected constructor(protected readonly container: HTMLElement) {

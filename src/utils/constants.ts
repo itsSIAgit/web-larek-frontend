@@ -8,16 +8,25 @@ export const API_URL = `${process.env.API_ORIGIN}/api/weblarek`;
 export const CDN_URL = `${process.env.API_ORIGIN}/content/weblarek`;
 
 export const settings = {
-  // cardTemplate: 'film-card',
-  // contentTemplate: 'film-info',
-  // modalHeaderTemplate: 'film-head',
-  // modalTemplate: 'modal',
-  // scheduleTemplate: 'schedule',
-  // placesTemplate: 'places',
-  // basketTemplate: 'basket',
-  // ticketTemplate: 'ticket',
-  // orderTemplate: 'order',
-  // successTemplate: 'success',
+  cardCatalogTemplate: 'card-catalog',
+  cardPreviewTemplate: 'card-preview',
+  cardBasketTemplate: 'card-basket',
+  basketTemplate: 'basket',
+  orderTemplate: 'order',
+  contactsTemplate: 'contacts',
+  successTemplate: 'success',
+  
+  modalContainerId: 'modal-container',
+  galleryClass: '.gallery',
+  
+  typeSelector: {
+    'софт-скил': 'card__category_soft',
+    'хард-скил': 'card__category_hard',
+    'другое': 'card__category_other',
+    'дополнительное': 'card__category_additional',
+    'кнопка': 'card__category_button'
+  },
+  
   basketStorageKey: 'goods',
   infoStorageKey: 'info'
 };
