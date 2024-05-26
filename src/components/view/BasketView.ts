@@ -25,7 +25,8 @@ export class BasketView extends Component<IBasketView> {
     this._total = ensureElement<HTMLElement>('.basket__price', container);
     this._list = ensureElement<HTMLElement>('.basket__list', container);
 
-    this._purchaseButton.addEventListener('click', () => this.events.emit('purchase:next'));
+    this._purchaseButton.addEventListener('click', () =>
+        this.events.emit('modal:next', { name: 'basket' }));
   }
   
   /**

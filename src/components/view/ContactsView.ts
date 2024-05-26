@@ -26,7 +26,9 @@ export class ContactsView extends Component<IComponent> {
 
     this.container.addEventListener('submit', event => {
       event.preventDefault();
-      this.events.emit('modal:submit');
+      const target = event.target as HTMLFormElement;
+      const name = target.name;
+      this.events.emit('modal:next', { name });
     });
     this.container.addEventListener('input', event => {
       const target = event.target as HTMLInputElement;

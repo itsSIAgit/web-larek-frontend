@@ -68,23 +68,15 @@ events.on('goods:changed', () => {
 events.on('basket:changed', () => {
   basket.save();
   page.goodsCount = basket.goodsCount();
-  if (basket.goodsCount()) {
-    const basketArr = basket.items.map((productData, position) => {
-      const card = new Card(events, cloneTemplate(cardBasketTemplate as HTMLTemplateElement));
-      return card.render(cardDataBuilder(productData, 'basket', position));
-    })
-    basketView.render({
-      list: basketArr,
-      total: basket.total(),
-      purchaseOpportunity: basket.purchaseOpportunity()
-    });
-  } else {
-    basketView.render({
-      list: null,
-      total: 0,
-      purchaseOpportunity: false
-    });
-  }
+  const basketArr = basket.items.map((productData, position) => {
+    const card = new Card(events, cloneTemplate(cardBasketTemplate as HTMLTemplateElement));
+    return card.render(cardDataBuilder(productData, 'basket', position));
+  })
+  basketView.render({
+    list: basketArr,
+    total: basket.total(),
+    purchaseOpportunity: basket.purchaseOpportunity()
+  });
 });
 
 //При изменении данных для оформления покупки
@@ -120,29 +112,30 @@ events.on('big:open', (data: { id: string }) => {
   modal.render({ content: card.render(cardDataBuilder(catalog.getProduct(data.id), 'big')) });
 });
 
-//Нажатие кнопки "Оформить" в корзине
-events.on('purchase:next', () => {
-  const { payment, address } = info.getData();
-  modal.content = orderView.render({
-    payment,
-    address,
-    valid: !!payment && !!address
-  });
-});
-
-events.on('modal:next', () => {
-  const { email, phone } = info.getData();
-  modal.content = contactsView.render({
-    email,
-    phone,
-    valid: !!email && !!phone
-  });
+//Нажатие кнопок "Оформить", "Далее", "Оплатить", "За покупками" в формах
+events.on('modal:next', (data: { name: string }) => {
+  switch (data.name) {
+    case 'basket':
+      const { payment, address } = info.getData();
+      modal.content = orderView.render({
+        payment, address, valid: !!payment && !!address
+      });
+      break;
+    case 'order':
+      const { email, phone } = info.getData();
+      modal.content = contactsView.render({
+        email, phone, valid: !!email && !!phone
+      });
+      break;
+    case 'contacts': console.log('contacts'); //!==================
+      break;
+    case 'success': console.log('success'); //!==================
+  }
 });
 
 
 //События изменения данных из-за действий пользователя
-//При вводе в поля форм
-//Нажатие кнопки "Онлайн" и "При получении"
+//При вводе в поля форм, и нажатия кнопок "Онлайн" и "При получении"
 //Кнопки на форме тоже считаются элементом ввода
 events.on(/^.+:input/, (data: { type: string, text: string }) => {
   const { type, text } = data;
@@ -186,7 +179,6 @@ events.on(/^.+:input/, (data: { type: string, text: string }) => {
 
 
 
-events.on('modal:submit', () => {});
 
 
 //Блокировка прокрутки страницы если открыто окно
