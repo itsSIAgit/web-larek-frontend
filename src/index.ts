@@ -1,4 +1,4 @@
-import { IApi, IProduct } from './types';
+import { IApi, IProduct, TPayment } from './types';
 import { API_URL, CDN_URL, settings } from './utils/constants';
 import { Api } from './components/base/api';
 import { EventEmitter } from './components/base/events';
@@ -145,28 +145,42 @@ events.on('modal:next', () => {
 //Нажатие кнопки "Онлайн" и "При получении"
 //Кнопки на форме тоже считаются элементом ввода
 events.on(/^.+:input/, (data: { type: string, text: string }) => {
-  info.setData({ [data.type]: data.text });
-  const msg = {
-    'address': 'Нужно ввести адрес.',
-    'email': 'Нужно ввести email.',
-    'phone': 'Нужно ввести телефон.'
+  const { type, text } = data;
+  const formValid = () => {
+    switch (type) {
+      case 'payment':
+      case 'address':
+        const { payment, address } = info.getData();
+        return !!payment && !!address;
+      case 'email':
+      case 'phone':
+        const { email, phone } = info.getData();
+        return !!email && !!phone;
+    }
   }
-  switch (data.type) {
+  const putErr = (form: OrderView | ContactsView) => {
+    const msg = {
+      'address': 'Нужно ввести адрес.',
+      'email': 'Нужно ввести email.',
+      'phone': 'Нужно ввести телефон.'
+    }
+    form.valid = formValid();
+    if (!text) form.errors = { [type]: msg[type as keyof object] };
+    else form.errors = { [type]: '' };
+  }
+
+  info.setData({ [type]: text });
+  switch (type) {
+    case 'payment':
+      orderView.payment = text as TPayment;
+      orderView.valid = formValid();
+      break;
     case 'address':
-      orderView.valid = !!data.text;
-      if (!data.text) orderView.errors = { [data.type]: msg[data.type] };
-      else orderView.errors = { [data.type]: '' };
+      putErr(orderView);
       break;
     case 'email':
     case 'phone':
-      contactsView.valid = !!data.text;
-      if (!data.text) contactsView.errors = { [data.type]: msg[data.type] };
-      else contactsView.errors = { [data.type]: '' };
-      break;
-    case 'online':
-    case 'physically':
-      info.setData({ payment: data.type });
-      orderView.payment = data.type;
+      putErr(contactsView);
   }
 });
 

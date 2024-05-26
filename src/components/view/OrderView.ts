@@ -30,8 +30,8 @@ export class OrderView extends Component<IOrderView> {
     this._address = ensureElement<HTMLInputElement>('input[name=address]', this.container);
     this._errors = ensureElement<HTMLElement>('.form__errors', this.container);
 
-    this.buttonCard.addEventListener('click', () => this.events.emit('online:input', { type: 'online' }));
-    this.buttonCash.addEventListener('click', () => this.events.emit('physically:input', { type: 'physically' }));
+    this.buttonCard.addEventListener('click', () => this.events.emit('payment:input', { type: 'payment', text: 'online' }));
+    this.buttonCash.addEventListener('click', () => this.events.emit('payment:input', { type: 'payment', text: 'physically' }));
     this.container.addEventListener('submit', event => {
       event.preventDefault();
       this.events.emit('modal:next');
