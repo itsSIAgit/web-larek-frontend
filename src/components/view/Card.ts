@@ -1,7 +1,7 @@
 import { Component } from "../base/Component";
 import { IEvents } from "../base/events";
 
-interface TCard {
+interface ICard {
   title: string;
   price: number;
   image: string;
@@ -17,7 +17,7 @@ interface TCard {
  * для разных мест применения (на главной, большая
  * подробная, в корзине), в зависимости от поступившего шаблона.
  */
-export class Card extends Component<TCard> {
+export class Card extends Component<ICard> {
   protected events: IEvents;
   protected _id: string;
   protected _title: HTMLElement;

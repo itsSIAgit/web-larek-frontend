@@ -8,6 +8,7 @@ import { Basket } from './components/data/Basket';
 import { PurchaseInfo } from './components/data/PurchaseInfo';
 import { Page } from './components/view/Page';
 import { Card } from './components/view/Card';
+import { BasketView } from './components/view/BasketView';
 import { cloneTemplate } from './utils/utils';
 import './scss/styles.scss';
 import { Popup } from './components/view/Popup';
@@ -20,22 +21,30 @@ const basket = new Basket(events, settings.basketStorageKey);
 const info = new PurchaseInfo(events, settings.infoStorageKey);
 const page = new Page(events);
 const modal = new Popup(events, document.getElementById(settings.modalContainerId))
+const basketView = new BasketView(events, cloneTemplate(document.getElementById(settings.basketTemplate) as HTMLTemplateElement));
 const cardCatalogTemplate = document.getElementById(settings.cardCatalogTemplate);
 const cardPreviewTemplate = document.getElementById(settings.cardPreviewTemplate);
 const cardBasketTemplate = document.getElementById(settings.cardBasketTemplate);
 
-function cardDataBuilder(data: IProduct, preset: 'gallery' | 'big' | 'basket') {
+
+/**
+ * Подготавливает набор данных для рендера
+ * карточки товара, в зависимости от типа
+ */
+function cardDataBuilder(data: IProduct, preset: 'gallery' | 'big' | 'basket', position?: number) {
   let { id, title, price, image, category, description } = data;
   const type = settings.typeSelector[category as keyof object];
+  const inBasket = basket.haveProduct(id);
   image = CDN_URL + image;
   switch (preset) {
     case 'gallery': return { id, title, price, image, category, type };
-    case 'big': return { id, title, price, image, category, type, description };
-    case 'basket': return { id, title, price };
+    case 'big': return { id, title, price, image, category, type, description, inBasket };
+    case 'basket': return { id, title, price, position };
   }
 }
 
-events.onAll(event => console.log(event));
+events.onAll(event => console.log(event)); //! Служебное
+
 events.on('goods:changed', () => {
   const galleryArr: HTMLElement[] = [];
   catalog.items.forEach(productData => {
@@ -44,10 +53,30 @@ events.on('goods:changed', () => {
   })
   page.render(galleryArr);
 });
+
 events.on('basket:changed', () => {
   basket.save();
   page.goodsCount = basket.goodsCount();
+  if (basket.goodsCount()) {
+    const basketArr: HTMLElement[] = [];
+    basket.items.forEach((productData, position) => {
+      const card = new Card(events, cloneTemplate(cardBasketTemplate as HTMLTemplateElement));
+      basketArr.push(card.render(cardDataBuilder(productData, 'basket', position)));
+    })
+    basketView.render({
+      list: basketArr,
+      total: basket.total(),
+      purchaseOpportunity: basket.purchaseOpportunity()
+    });
+  } else {
+    basketView.render({
+      list: null,
+      total: 0,
+      purchaseOpportunity: false
+    });
+  }
 });
+
 events.on('info:changed', () => {
   info.save();
 });
@@ -56,6 +85,18 @@ events.on('big:open', (data: { id: string }) => {
   const card = new Card(events, cloneTemplate(cardPreviewTemplate as HTMLTemplateElement));
   modal.render({ content: card.render(cardDataBuilder(catalog.getProduct(data.id), 'big')) });
 });
+
+
+
+// events.on('buy:click', () => {});
+// events.on('card:delete', () => {});
+
+
+events.on('basket:open', () => {
+  modal.render({ content: basketView.render() });
+});
+
+
 
 // Блокировка прокрутки страницы если открыто окно
 events.on('modal:open', () => {
@@ -66,10 +107,6 @@ events.on('modal:open', () => {
 events.on('modal:close', () => {
   page.locked = false;
 });
-
-// events.on('buy:click', () => {});
-// events.on('card:delete', () => {});
-
 
 api.getGoods()
   .then(goods => {
