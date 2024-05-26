@@ -1,4 +1,4 @@
-import { IApi, IProduct, TPayment } from './types';
+import { IApi, IProduct } from './types';
 import { API_URL, CDN_URL, settings } from './utils/constants';
 import { Api } from './components/base/api';
 import { EventEmitter } from './components/base/events';
@@ -141,13 +141,9 @@ events.on('modal:next', () => {
 
 
 //События изменения данных из-за действий пользователя
-//Нажатие кнопки "Онлайн" и "При получении"
-events.on('payMethod:click', (data: { method: TPayment }) => {
-  info.setData({ payment: data.method });
-  orderView.payment = data.method;
-});
-
 //При вводе в поля форм
+//Нажатие кнопки "Онлайн" и "При получении"
+//Кнопки на форме тоже считаются элементом ввода
 events.on(/^.+:input/, (data: { type: string, text: string }) => {
   info.setData({ [data.type]: data.text });
   const msg = {
@@ -160,12 +156,17 @@ events.on(/^.+:input/, (data: { type: string, text: string }) => {
       orderView.valid = !!data.text;
       if (!data.text) orderView.errors = { [data.type]: msg[data.type] };
       else orderView.errors = { [data.type]: '' };
-    break;
+      break;
     case 'email':
     case 'phone':
       contactsView.valid = !!data.text;
       if (!data.text) contactsView.errors = { [data.type]: msg[data.type] };
       else contactsView.errors = { [data.type]: '' };
+      break;
+    case 'online':
+    case 'physically':
+      info.setData({ payment: data.type });
+      orderView.payment = data.type;
   }
 });
 
