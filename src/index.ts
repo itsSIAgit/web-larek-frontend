@@ -1,4 +1,4 @@
-import { IApi, IProduct } from './types';
+import { IApi, IProduct, TPayment } from './types';
 import { API_URL, CDN_URL, settings } from './utils/constants';
 import { Api } from './components/base/api';
 import { EventEmitter } from './components/base/events';
@@ -8,10 +8,11 @@ import { Basket } from './components/data/Basket';
 import { PurchaseInfo } from './components/data/PurchaseInfo';
 import { Page } from './components/view/Page';
 import { Card, ICard } from './components/view/Card';
+import { Popup } from './components/view/Popup';
 import { BasketView } from './components/view/BasketView';
+import { OrderView } from './components/view/OrderView';
 import { cloneTemplate } from './utils/utils';
 import './scss/styles.scss';
-import { Popup } from './components/view/Popup';
 
 const events = new EventEmitter();
 const baseApi = new Api(API_URL);
@@ -22,6 +23,7 @@ const info = new PurchaseInfo(events, settings.infoStorageKey);
 const page = new Page(events);
 const modal = new Popup(events, document.getElementById(settings.modalContainerId))
 const basketView = new BasketView(events, cloneTemplate(document.getElementById(settings.basketTemplate) as HTMLTemplateElement));
+const orderView = new OrderView(events, cloneTemplate(document.getElementById(settings.orderTemplate) as HTMLTemplateElement));
 const cardCatalogTemplate = document.getElementById(settings.cardCatalogTemplate);
 const cardPreviewTemplate = document.getElementById(settings.cardPreviewTemplate);
 const cardBasketTemplate = document.getElementById(settings.cardBasketTemplate);
@@ -83,6 +85,11 @@ events.on('basket:changed', () => {
   }
 });
 
+//При изменении данных для оформления покупки
+events.on('info:changed', () => {
+  info.save();
+});
+
 //Нажатие кнопки купить в большой форме карточки (если доступна)
 events.on('buy:click', (data: { card: ICard, id: string }) => {
   const { card } = data;
@@ -98,28 +105,56 @@ events.on('card:delete', (data: { id: string }) => {
   basket.remove(data.id);
 });
 
-events.on('info:changed', () => {
-  info.save();
-});
-
 
 //События - открывашки модалок
+//Нажатие на иконку корзины
 events.on('basket:open', () => {
   modal.render({ content: basketView.render() });
 });
 
+//Нажатие на карточку для открытия большого окна
 events.on('big:open', (data: { id: string }) => {
   const card = new Card(events, cloneTemplate(cardPreviewTemplate as HTMLTemplateElement));
   modal.render({ content: card.render(cardDataBuilder(catalog.getProduct(data.id), 'big')) });
 });
 
+//Нажатие кнопки "Оформить" в корзине
+events.on('purchase:next', () => {
+  const { payment, address } = info.getData();
+  modal.content = orderView.render({ payment, address });
+});
 
-// Блокировка прокрутки страницы если открыто окно
+
+//События изменения данных из-за действий пользователя
+//Нажатие кнопки "Онлайн" и "При получении"
+events.on('payMethod:click', (data: { method: TPayment }) => {
+  info.setData({ payment: data.method });
+  orderView.payment = data.method;
+});
+
+//При вводе в поля форм
+events.on(/^.+:input/, (data: { type: string, text: string }) => {
+  switch (data.type) {
+    case 'address':
+      info.setData({ address: data.text });
+      orderView.valid = !!data.text;
+      if (!data.text) orderView.errors = 'Нужно ввести адрес';
+      else orderView.errors = '';
+    break;
+  }
+});
+
+events.on('modal:next', () => {});
+
+events.on('modal:submit', () => {});
+
+
+//Блокировка прокрутки страницы если открыто окно
 events.on('modal:open', () => {
   page.locked = true;
 });
 
-// Разблокировка
+//Разблокировка
 events.on('modal:close', () => {
   page.locked = false;
 });

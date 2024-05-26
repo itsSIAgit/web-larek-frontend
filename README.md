@@ -311,12 +311,15 @@ export type TApiPostData = {
 - `events: IEvents` - экземпляр класса EventEmitter
 - `buttonCard: HTMLButtonElement` - кнопка онлайн оплаты
 - `buttonCash: HTMLButtonElement` - кнопка оплаты при получении
-- `address: HTMLInputElement` - поле ввода адреса
-- `_buttonNext: HTMLButtonElement` - кнопка "Далее"
+- `buttonNext: HTMLButtonElement` - кнопка "Далее"
+- `_address: HTMLInputElement` - поле ввода адреса
+- `_errors: HTMLElement` - поле для ошибок ввода
 
 Методы класса:
-- `render (data: Partial<IPurchaseInfo>, valid: boolean)` - обновляет отображаемые данные и возвращает контейнер с формой целиком
-- сеттер `buttonNext` - устанавливает доступность кнопки "Далее"
+- сеттер `valid` - устанавливает доступность кнопки "Далее"
+- сеттер `errors` - покажет ошибки ввода
+- сеттер `payment` - переключит состояния кнопок оплаты
+- сеттер `address` - заполнит поле адреса
 
 #### Класс ContactsView
 Готовит представление форм ввода email-а и телефона, из шаблона.
@@ -397,7 +400,7 @@ export type TApiPostData = {
 - `goods:changed` - изменение массива продуктов в каталоге
 - `basket:changed` - изменение массива продуктов в корзине
 - `info:changed` - изменение дынных для покупки
-<!-- - `infoPayment:changed` - изменение способа оплаты
+<!--! - `infoPayment:changed` - изменение способа оплаты
 - `infoAddress:changed` - изменение адреса
 - `infoEmail:changed` - изменение почты
 - `infoPhone:changed` - изменение телефона -->
@@ -411,13 +414,15 @@ export type TApiPostData = {
 - `basket:open` - запрос открытия модального окна с корзиной
 - `big:open` - запрос открытия модального окна с подробной карточкой
 - `buy:click` - нажатие кнопки "Купить" в форме подробного описания товара
-- `purchase:next` - нажатие кнопки "Оформить" в корзине
-
 - `card:delete` - нажатие кнопки удаления товара из корзины
+- `purchase:next` - нажатие кнопки "Оформить" в корзине
 - `modal:next` - нажатие кнопки "Далее" в форме ввода способа платежа и адреса
+- `payMethod:click` - нажатие кнопки "Онлайн" и "При получении"
+<!--! - `payCash:click` - нажатие кнопки "При получении" -->
+
 - `modal:submit` - нажатие кнопки "Оплатить" в форме ввода email-а и телефона
-- `modal:finish` - нажатие кнопки "За новыми покупками!"
-- `modal:close` - при нажатии на крестик модального окна, на клавишу ESC, или вне области.
+
 - `address:input` - при вводе в поле формы - address (каждый символ)
 - `email:input` - при вводе в поле формы - email (каждый символ)
 - `phone:input` - при вводе в поле формы - phone (каждый символ)
+- `modal:finish` - нажатие кнопки "За новыми покупками!"

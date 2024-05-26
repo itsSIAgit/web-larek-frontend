@@ -37,7 +37,7 @@ export class Popup extends Component<IModalData>{
    */
   open() {
     this.container.classList.add('modal_active');
-    document.addEventListener("keyup", this.handleEscUp);
+    document.addEventListener('keyup', this.handleEscUp);
     this.events.emit('modal:open');
   }
   
@@ -47,7 +47,7 @@ export class Popup extends Component<IModalData>{
    */
   close() {
     this.container.classList.remove('modal_active');
-    document.removeEventListener("keyup", this.handleEscUp);
+    document.removeEventListener('keyup', this.handleEscUp);
     this.content = null;
     this.events.emit('modal:close');
   }
@@ -56,7 +56,7 @@ export class Popup extends Component<IModalData>{
    * Метод для закрытия окна по клавише ESC
    */
   protected handleEscUp (event: KeyboardEvent) {
-    if (event.key === "Escape") {
+    if (event.key === 'Escape') {
       this.close();
     }
   }
