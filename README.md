@@ -331,13 +331,14 @@ export type TApiPostData = {
 
 Поля класса:
 - `events: IEvents` - экземпляр класса EventEmitter
-- `email: HTMLInputElement` - поле ввода Email
-- `phone: HTMLInputElement` - поле ввода телефона
-- `_buttonPay: HTMLButtonElement` - кнопка "Оплатить"
+- `buttonNext: HTMLButtonElement` - кнопка "Оплатить"
+- `_email: HTMLInputElement` - поле ввода Email
+- `_phone: HTMLInputElement` - поле ввода телефона
+- `_errors: HTMLElement` - поле для ошибок ввода
 
 Методы класса:
-- `render (data: Partial<IPurchaseInfo>, valid: boolean)` - обновляет отображаемые данные и возвращает контейнер с формой целиком
-- сеттер `buttonPay` - устанавливает доступность кнопки "Оплатить"
+<!--! - `render (data: Partial<IPurchaseInfo>, valid: boolean)` - обновляет отображаемые данные и возвращает контейнер с формой целиком
+- сеттер `buttonPay` - устанавливает доступность кнопки "Оплатить" -->
 
 #### Класс SuccessView
 Готовит представление успешного оформления (отправки на сервер) заказа, из шаблона.

@@ -36,10 +36,12 @@ export class OrderView extends Component<IOrderView> {
       event.preventDefault();
       this.events.emit('modal:next');
     });
-    this._address.addEventListener('input', event => {
+
+    this.container.addEventListener('input', event => {
       const target = event.target as HTMLInputElement;
+      const field = target.name;
       const value = target.value;
-      this.events.emit('address:input', { type: 'address', text: value })
+      this.events.emit(`${field}:input`, { type: `${field}`, text: value })
     });
   }
 
@@ -53,9 +55,12 @@ export class OrderView extends Component<IOrderView> {
   /**
    * Покажет ошибки ввода
    */
-  set errors(data: string) {
-    this._address.setCustomValidity(data);
-    this.setText(this._errors, data);
+  set errors(data: { address?: string }) {
+    for (let key in data) {
+      const field = this[`_${key}` as keyof OrderView] as HTMLInputElement;
+      field.setCustomValidity(data[key as keyof object]);
+    }
+    this.setText(this._errors, Object.values(data));
   }
 
   /**
@@ -73,6 +78,6 @@ export class OrderView extends Component<IOrderView> {
    * Заполнит поле адреса
    */
   set address(data: string) {
-    this.setText(this._address, data);
+    this._address.value = String(data);
   }
 }

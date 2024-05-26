@@ -11,6 +11,7 @@ import { Card, ICard } from './components/view/Card';
 import { Popup } from './components/view/Popup';
 import { BasketView } from './components/view/BasketView';
 import { OrderView } from './components/view/OrderView';
+import { ContactsView } from './components/view/ContactsView';
 import { cloneTemplate } from './utils/utils';
 import './scss/styles.scss';
 
@@ -24,6 +25,7 @@ const page = new Page(events);
 const modal = new Popup(events, document.getElementById(settings.modalContainerId))
 const basketView = new BasketView(events, cloneTemplate(document.getElementById(settings.basketTemplate) as HTMLTemplateElement));
 const orderView = new OrderView(events, cloneTemplate(document.getElementById(settings.orderTemplate) as HTMLTemplateElement));
+const contactsView = new ContactsView(events, cloneTemplate(document.getElementById(settings.contactsTemplate) as HTMLTemplateElement));
 const cardCatalogTemplate = document.getElementById(settings.cardCatalogTemplate);
 const cardPreviewTemplate = document.getElementById(settings.cardPreviewTemplate);
 const cardBasketTemplate = document.getElementById(settings.cardBasketTemplate);
@@ -121,7 +123,20 @@ events.on('big:open', (data: { id: string }) => {
 //Нажатие кнопки "Оформить" в корзине
 events.on('purchase:next', () => {
   const { payment, address } = info.getData();
-  modal.content = orderView.render({ payment, address });
+  modal.content = orderView.render({
+    payment,
+    address,
+    valid: !!payment && !!address
+  });
+});
+
+events.on('modal:next', () => {
+  const { email, phone } = info.getData();
+  modal.content = contactsView.render({
+    email,
+    phone,
+    valid: !!email && !!phone
+  });
 });
 
 
@@ -134,17 +149,27 @@ events.on('payMethod:click', (data: { method: TPayment }) => {
 
 //При вводе в поля форм
 events.on(/^.+:input/, (data: { type: string, text: string }) => {
+  info.setData({ [data.type]: data.text });
+  const msg = {
+    'address': 'Нужно ввести адрес.',
+    'email': 'Нужно ввести email.',
+    'phone': 'Нужно ввести телефон.'
+  }
   switch (data.type) {
     case 'address':
-      info.setData({ address: data.text });
       orderView.valid = !!data.text;
-      if (!data.text) orderView.errors = 'Нужно ввести адрес';
-      else orderView.errors = '';
+      if (!data.text) orderView.errors = { [data.type]: msg[data.type] };
+      else orderView.errors = { [data.type]: '' };
     break;
+    case 'email':
+    case 'phone':
+      contactsView.valid = !!data.text;
+      if (!data.text) contactsView.errors = { [data.type]: msg[data.type] };
+      else contactsView.errors = { [data.type]: '' };
   }
 });
 
-events.on('modal:next', () => {});
+
 
 events.on('modal:submit', () => {});
 
