@@ -1,7 +1,8 @@
 import { Component } from "../base/Component";
 import { IEvents } from "../base/events";
 
-interface ICard {
+export interface ICard {
+  id: string;
   title: string;
   price: number;
   image: string;
@@ -9,7 +10,7 @@ interface ICard {
   type: string;
   description: string;
   position: number;
-  inBasket: boolean;
+  canBuy: string;
 }
 
 /**
@@ -46,7 +47,7 @@ export class Card extends Component<ICard> {
     //кнопку удаления товара из корзины
     if (this.buyButton) {
       this.buyButton
-        .addEventListener('click', () => this.events.emit('buy:click', { id: this._id }));
+        .addEventListener('click', () => this.events.emit('buy:click', { card: this, id: this._id }));
     }
     if (this.deleteButton) {
       this.deleteButton
@@ -98,11 +99,16 @@ export class Card extends Component<ICard> {
     if (this._position) this.setText(this._position, data);
   }
 
-  set inBasket(status: boolean) {
+  set canBuy(status: string) {
     if (this.buyButton) {
-      this.setDisabled(this.buyButton, status);
-      if (status) this.setText(this.buyButton, 'В козине');
-      else this.setText(this.buyButton, 'Купить')
+      this.setDisabled(this.buyButton, status !== 'yes');
+      switch (status) {
+        case 'inf': this.setText(this.buyButton, 'Бесценно');
+        break;
+        case 'no': this.setText(this.buyButton, 'В козине');
+        break;
+        default: this.setText(this.buyButton, 'Купить')
+      }
     }
   }
 }

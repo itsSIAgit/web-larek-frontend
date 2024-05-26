@@ -58,16 +58,6 @@ export type TPurchaseData = {
   phone: string;
 }
 
-/**
- * Интерфейс всплывающего окна (компонент Popup)
- */
-interface IPopup {
-  content: HTMLElement;
-  open(): void;
-  close(): void;
-  erase(): void;
-}
-
 //Типы для работы с Api (компонент ShopApi)
 /**
  * Методы отправки данных

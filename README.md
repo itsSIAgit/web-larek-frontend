@@ -251,8 +251,10 @@ export type TApiPostData = {
 Поля класса:
 - `events: IEvents` - экземпляр класса EventEmitter
 - `containerCard: HTMLElement` - место куда складывать карточки товаров
+- `_wrapper: HTMLElement` - тело страницы (для блокировки прокрутки)
 - `basketButton: HTMLButtonElement` - кнопка корзины на главной странице
 - `_count: HTMLElement` - поле с количеством товаров в корзине
+- `scrollTop: number` и `scrollLeft: number` - для восстановления позиции просмотра после открытия модалки
 
 Методы класса:
 - `render (items: HTMLElement[]): HTMLElement` - обновляет отображение каталога и возвращает контейнер с плиткой карточек

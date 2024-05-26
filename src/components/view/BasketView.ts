@@ -32,7 +32,7 @@ export class BasketView extends Component<IBasketView> {
    * Устанавливает стоимость покупки
    */
   set total(data: number) {
-    this.setText(this._total, data);
+    this.setText(this._total, data ? data + ' синапсов' : 'Пусто');
   }
 
   /**
@@ -43,11 +43,10 @@ export class BasketView extends Component<IBasketView> {
   }
 
   /**
-   * Добавляет карточки товаров,
-   * или уничтожает если пришел null
+   * Обновляет карточки товаров
    */
   set list(fill: HTMLElement[]) {
+    this._list.replaceChildren();
     if (fill) this._list.replaceChildren(...fill);
-    else this._list.replaceChildren(null);
   }
 }

@@ -10,12 +10,16 @@ import { IEvents } from "../base/events";
 export class Page {
   protected events: IEvents;
   protected containerCard: HTMLElement;
+  protected _wrapper: HTMLElement;
   protected basketButton: HTMLButtonElement;
   protected _count: HTMLElement;
+  protected scrollTop: number;
+  protected scrollLeft: number;
   
   constructor(events: IEvents) {
     this.events = events;
     this.containerCard = ensureElement<HTMLElement>('.gallery');
+    this._wrapper = ensureElement<HTMLElement>('.page__wrapper');
     this.basketButton = ensureElement<HTMLButtonElement>('.header__basket');
     this._count = ensureElement<HTMLElement>('.header__basket-counter', this.basketButton);
 
@@ -38,23 +42,18 @@ export class Page {
   }
 
   /**
-   * Блокировка прокрутки страницы.\
-   * Реализация через блокировку скролла,
-   * т.к. через класс страница дергается в начало.
+   * Блокировка прокрутки страницы
    */
   set locked(value: boolean) {
+    //Т.к. из-за установки класса страница улетает в начало,
+    //то при блокировке запоминаем где был скролл, а после восстанавливаем
     if (value) {
-      const scrollTop =
-        window.scrollY ||
-        document.documentElement.scrollTop;
-      const scrollLeft =
-        window.scrollX ||
-        document.documentElement.scrollLeft;
-      window.onscroll = function () {
-        window.scrollTo(scrollLeft, scrollTop);
-      };
+      this.scrollTop = window.scrollY || document.documentElement.scrollTop;
+      this.scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+      this._wrapper.classList.add('page__wrapper_locked');
     } else {
-      window.onscroll = function () {};
+      this._wrapper.classList.remove('page__wrapper_locked');
+      window.scrollTo(this.scrollLeft, this.scrollTop);
     }
   }
 }

@@ -7,7 +7,7 @@ import { Catalog } from './components/data/Catalog';
 import { Basket } from './components/data/Basket';
 import { PurchaseInfo } from './components/data/PurchaseInfo';
 import { Page } from './components/view/Page';
-import { Card } from './components/view/Card';
+import { Card, ICard } from './components/view/Card';
 import { BasketView } from './components/view/BasketView';
 import { cloneTemplate } from './utils/utils';
 import './scss/styles.scss';
@@ -26,7 +26,6 @@ const cardCatalogTemplate = document.getElementById(settings.cardCatalogTemplate
 const cardPreviewTemplate = document.getElementById(settings.cardPreviewTemplate);
 const cardBasketTemplate = document.getElementById(settings.cardBasketTemplate);
 
-
 /**
  * Подготавливает набор данных для рендера
  * карточки товара, в зависимости от типа
@@ -34,34 +33,41 @@ const cardBasketTemplate = document.getElementById(settings.cardBasketTemplate);
 function cardDataBuilder(data: IProduct, preset: 'gallery' | 'big' | 'basket', position?: number) {
   let { id, title, price, image, category, description } = data;
   const type = settings.typeSelector[category as keyof object];
-  const inBasket = basket.haveProduct(id);
+  const canBuy = price === null ? 'inf' : basket.haveProduct(id) ? 'no' : 'yes';
   image = CDN_URL + image;
   switch (preset) {
     case 'gallery': return { id, title, price, image, category, type };
-    case 'big': return { id, title, price, image, category, type, description, inBasket };
+    case 'big': return { id, title, price, image, category, type, description, canBuy };
     case 'basket': return { id, title, price, position };
   }
 }
 
 events.onAll(event => console.log(event)); //! Служебное
 
+//События изменения данных
+
+//Изменение каталога, и по сути первичная
+//инициализация после получения товаров с сервера,
+//т.к. больше нет того чтобы могло поменять каталог 
 events.on('goods:changed', () => {
-  const galleryArr: HTMLElement[] = [];
-  catalog.items.forEach(productData => {
+  const galleryArr = catalog.items.map(productData => {
     const card = new Card(events, cloneTemplate(cardCatalogTemplate as HTMLTemplateElement));
-    galleryArr.push(card.render(cardDataBuilder(productData, 'gallery')));
-  })
+    return card.render(cardDataBuilder(productData, 'gallery'));
+  });
   page.render(galleryArr);
 });
 
+//Изменение данных корзины:
+//- загрузка с локального хранилища
+//- добавление по кнопке из большой формы
+//- удаление по кнопке карточки в форме корзины
 events.on('basket:changed', () => {
   basket.save();
   page.goodsCount = basket.goodsCount();
   if (basket.goodsCount()) {
-    const basketArr: HTMLElement[] = [];
-    basket.items.forEach((productData, position) => {
+    const basketArr = basket.items.map((productData, position) => {
       const card = new Card(events, cloneTemplate(cardBasketTemplate as HTMLTemplateElement));
-      basketArr.push(card.render(cardDataBuilder(productData, 'basket', position)));
+      return card.render(cardDataBuilder(productData, 'basket', position));
     })
     basketView.render({
       list: basketArr,
@@ -77,25 +83,35 @@ events.on('basket:changed', () => {
   }
 });
 
+//Нажатие кнопки купить в большой форме карточки (если доступна)
+events.on('buy:click', (data: { card: ICard, id: string }) => {
+  const { card } = data;
+  card.canBuy = 'no';
+  basket.add(catalog.getProduct(data.id));
+});
+
+//Нажатие иконки мусорки в форме корзины
+//Прим.: можно было бы удалять отдельную карточку,
+//но нужно у всех сменить индексы в списке,
+//поэтому полный ре-рендер
+events.on('card:delete', (data: { id: string }) => {
+  basket.remove(data.id);
+});
+
 events.on('info:changed', () => {
   info.save();
+});
+
+
+//События - открывашки модалок
+events.on('basket:open', () => {
+  modal.render({ content: basketView.render() });
 });
 
 events.on('big:open', (data: { id: string }) => {
   const card = new Card(events, cloneTemplate(cardPreviewTemplate as HTMLTemplateElement));
   modal.render({ content: card.render(cardDataBuilder(catalog.getProduct(data.id), 'big')) });
 });
-
-
-
-// events.on('buy:click', () => {});
-// events.on('card:delete', () => {});
-
-
-events.on('basket:open', () => {
-  modal.render({ content: basketView.render() });
-});
-
 
 
 // Блокировка прокрутки страницы если открыто окно
@@ -108,6 +124,7 @@ events.on('modal:close', () => {
   page.locked = false;
 });
 
+//Первичная загрузка товаров
 api.getGoods()
   .then(goods => {
     catalog.setGoods(goods.items as IProduct[]);
