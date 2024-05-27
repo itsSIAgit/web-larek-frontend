@@ -22,8 +22,7 @@ export class OrderView extends Component<IOrderView> {
   protected _errors: HTMLElement;
 
   constructor(events: IEvents, container: HTMLElement) {
-    super(container);
-    this.events = events;
+    super(events, container);
     this.buttonCard = ensureElement<HTMLButtonElement>('button[name=card]', this.container);
     this.buttonCash = ensureElement<HTMLButtonElement>('button[name=cash]', this.container);
     this.buttonNext = ensureElement<HTMLButtonElement>('.order__button', this.container);

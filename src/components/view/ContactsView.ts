@@ -17,8 +17,8 @@ export class ContactsView extends Component<IComponent> {
   protected _errors: HTMLElement;
 
   constructor(events: IEvents, container: HTMLElement) {
-    super(container);
-    this.events = events;
+    super(events, container);
+    // this.events = events;
     this.buttonNext = ensureElement<HTMLButtonElement>('.button', this.container);
     this._email = ensureElement<HTMLInputElement>('input[name=email]', this.container);
     this._phone = ensureElement<HTMLInputElement>('input[name=phone]', this.container);

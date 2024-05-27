@@ -21,7 +21,7 @@ const api = new ShopApi(baseApi as IApi);
 const catalog = new Catalog(events);
 const basket = new Basket(events, settings.basketStorageKey);
 const info = new PurchaseInfo(events, settings.infoStorageKey);
-const page = new Page(events);
+const page = new Page(events, document.body);
 const modal = new Popup(events, document.getElementById(settings.modalContainerId))
 const basketView = new BasketView(events, cloneTemplate(document.getElementById(settings.basketTemplate) as HTMLTemplateElement));
 const orderView = new OrderView(events, cloneTemplate(document.getElementById(settings.orderTemplate) as HTMLTemplateElement));
@@ -58,7 +58,7 @@ events.on('goods:changed', () => {
     const card = new Card(events, cloneTemplate(cardCatalogTemplate as HTMLTemplateElement));
     return card.render(cardDataBuilder(productData, 'gallery'));
   });
-  page.render(galleryArr);
+  page.render({ gallery: galleryArr });
 });
 
 //Изменение данных корзины:
@@ -67,7 +67,7 @@ events.on('goods:changed', () => {
 //- удаление по кнопке карточки в форме корзины
 events.on('basket:changed', () => {
   basket.save();
-  page.goodsCount = basket.goodsCount();
+  page.count = basket.goodsCount();
   const basketArr = basket.items.map((productData, position) => {
     const card = new Card(events, cloneTemplate(cardBasketTemplate as HTMLTemplateElement));
     return card.render(cardDataBuilder(productData, 'basket', position));

@@ -31,8 +31,8 @@ export class Card extends Component<ICard> {
   protected deleteButton: HTMLButtonElement;
 
   constructor(events: IEvents, container: HTMLElement) {
-    super(container);
-    this.events = events;
+    super(events, container);
+    // this.events = events;
     this._title = container.querySelector('.card__title');
     this._price = container.querySelector('.card__price');
     this._image = container.querySelector('.card__image');

@@ -1,5 +1,12 @@
 import { ensureElement } from "../../utils/utils";
+import { Component } from "../base/Component";
 import { IEvents } from "../base/events";
+
+interface IPage {
+  gallery: HTMLElement[];
+  count: number;
+  locked: boolean;
+}
 
 /**
  * Отвечает за вывод контента на главной странице:
@@ -7,18 +14,18 @@ import { IEvents } from "../base/events";
  * Иконка корзины - показывает число товаров, и создает событие
  * для открытия корзины.
  */
-export class Page {
+export class Page extends Component<IPage> {
   protected events: IEvents;
-  protected containerCard: HTMLElement;
+  protected _gallery: HTMLElement;
   protected _wrapper: HTMLElement;
   protected basketButton: HTMLButtonElement;
   protected _count: HTMLElement;
   protected scrollTop: number;
   protected scrollLeft: number;
   
-  constructor(events: IEvents) {
-    this.events = events;
-    this.containerCard = ensureElement<HTMLElement>('.gallery');
+  constructor(events: IEvents, container: HTMLElement) {
+    super(events, container);
+    this._gallery = ensureElement<HTMLElement>('.gallery');
     this._wrapper = ensureElement<HTMLElement>('.page__wrapper');
     this.basketButton = ensureElement<HTMLButtonElement>('.header__basket');
     this._count = ensureElement<HTMLElement>('.header__basket-counter', this.basketButton);
@@ -29,15 +36,14 @@ export class Page {
   /**
    * Обновляет отображение каталога и возвращает контейнер с плиткой карточек
    */
-  render(items: HTMLElement[]): HTMLElement {
-    if (items) this.containerCard.replaceChildren(...items);
-    return this.containerCard;
+  set gallery(items: HTMLElement[]) {
+    if (items) this._gallery.replaceChildren(...items);
   }
 
   /**
    * Обновляет счетчик числа товаров в корзине
    */
-  set goodsCount(data: number) {
+  set count(data: number) {
     this._count.textContent = String(data);
   }
 

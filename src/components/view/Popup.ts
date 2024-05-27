@@ -18,8 +18,7 @@ export class Popup extends Component<IModalData>{
   protected _content: HTMLElement;
 
   constructor(events: IEvents, protected container: HTMLElement) {
-    super(container);
-    this.events = events;
+    super(events, container);
     this.closeButton = ensureElement<HTMLButtonElement>('.modal__close', container);
     this._content = ensureElement<HTMLElement>('.modal__content', container);
 
