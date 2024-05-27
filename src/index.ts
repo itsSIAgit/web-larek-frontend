@@ -136,7 +136,7 @@ events.on('modal:next', (data: { name: string }) => {
 
 //События изменения данных из-за действий пользователя
 //При вводе в поля форм, и нажатия кнопок "Онлайн" и "При получении"
-//Кнопки на форме тоже считаются элементом ввода
+//Кнопки способа оплаты на форме тоже считаются элементом ввода
 events.on(/^.+:input/, (data: { type: string, text: string }) => {
   const { type, text } = data;
   const formValid = () => {
@@ -152,13 +152,8 @@ events.on(/^.+:input/, (data: { type: string, text: string }) => {
     }
   }
   const putErr = (form: OrderView | ContactsView) => {
-    const msg = {
-      'address': 'Нужно ввести адрес.',
-      'email': 'Нужно ввести email.',
-      'phone': 'Нужно ввести телефон.'
-    }
     form.valid = formValid();
-    if (!text) form.errors = { [type]: msg[type as keyof object] };
+    if (!text) form.errors = { [type]: settings.msg[type as keyof object] };
     else form.errors = { [type]: '' };
   }
 

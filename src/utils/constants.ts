@@ -26,6 +26,12 @@ export const settings = {
     'кнопка': 'card__category_button'
   },
   
+  msg: {
+    'address': 'Нужно ввести адрес.',
+    'email': 'Нужно ввести email.',
+    'phone': 'Нужно ввести телефон.'
+  },
+  
   basketStorageKey: 'goods',
   infoStorageKey: 'info'
 };
