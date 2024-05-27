@@ -1,5 +1,5 @@
 {
-  "name": "my-webpack-project",
+  "name": "web-larek-project",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -32,7 +32,7 @@
     "webpack-cli": "^5.0.2",
     "webpack-dev-server": "^4.13.3"
   },
-  "description": "My webpack project",
+  "description": "Web larek project",
   "scripts": {
     "build": "webpack --mode=production --node-env=production",
     "build:dev": "webpack --mode=development",
