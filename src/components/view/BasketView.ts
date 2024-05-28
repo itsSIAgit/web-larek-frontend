@@ -13,10 +13,10 @@ interface IBasketView {
  * Подготавливает к отображению все карточки добавленные в корзину.
  */
 export class BasketView extends Component<IBasketView> {
-  protected events: IEvents;
   protected _list: HTMLElement;
   protected _purchaseButton: HTMLButtonElement;
   protected _total: HTMLElement;
+  // protected events: IEvents;
 
   constructor(events: IEvents, container: HTMLElement) {
     super(events, container);

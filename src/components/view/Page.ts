@@ -15,13 +15,13 @@ interface IPage {
  * для открытия корзины.
  */
 export class Page extends Component<IPage> {
-  protected events: IEvents;
   protected _gallery: HTMLElement;
   protected _wrapper: HTMLElement;
   protected basketButton: HTMLButtonElement;
   protected _count: HTMLElement;
   protected scrollTop: number;
   protected scrollLeft: number;
+  // protected events: IEvents;
   
   constructor(events: IEvents, container: HTMLElement) {
     super(events, container);

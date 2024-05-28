@@ -19,7 +19,6 @@ export interface ICard {
  * подробная, в корзине), в зависимости от поступившего шаблона.
  */
 export class Card extends Component<ICard> {
-  protected events: IEvents;
   protected _id: string;
   protected _title: HTMLElement;
   protected _price: HTMLElement;
@@ -29,6 +28,7 @@ export class Card extends Component<ICard> {
   protected _position: HTMLElement;
   protected buyButton: HTMLButtonElement;
   protected deleteButton: HTMLButtonElement;
+  // protected events: IEvents;
 
   constructor(events: IEvents, container: HTMLElement) {
     super(events, container);

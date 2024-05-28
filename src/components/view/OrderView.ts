@@ -1,25 +1,15 @@
 import { TPayment } from "../../types";
 import { ensureElement } from "../../utils/utils";
-import { Component } from "../base/Component"
+import { MasterForm } from "../base/MasterForm";
 import { IEvents } from "../base/events";
 
-interface IOrderView {
-  valid: boolean;
-  errors: string;
-  payment: TPayment;
-  address: string;
-}
-
 /**
- * Готовит представление формы ввода базовых данных для заказа
+ * Представление формы ввода базовых данных для заказа
  */
-export class OrderView extends Component<IOrderView> {
-  protected events: IEvents;
+export class OrderView extends MasterForm {
   protected buttonCard: HTMLButtonElement;
   protected buttonCash: HTMLButtonElement;
-  protected buttonNext: HTMLButtonElement;
   protected _address: HTMLInputElement;
-  protected _errors: HTMLElement;
 
   constructor(events: IEvents, container: HTMLElement) {
     super(events, container);
@@ -27,43 +17,11 @@ export class OrderView extends Component<IOrderView> {
     this.buttonCash = ensureElement<HTMLButtonElement>('button[name=cash]', this.container);
     this.buttonNext = ensureElement<HTMLButtonElement>('.order__button', this.container);
     this._address = ensureElement<HTMLInputElement>('input[name=address]', this.container);
-    this._errors = ensureElement<HTMLElement>('.form__errors', this.container);
 
     this.buttonCard.addEventListener('click', () =>
         this.events.emit('payment:input', { type: 'payment', text: 'online' }));
     this.buttonCash.addEventListener('click', () =>
         this.events.emit('payment:input', { type: 'payment', text: 'physically' }));
-    this.container.addEventListener('submit', event => {
-      event.preventDefault();
-      const target = event.target as HTMLFormElement;
-      const name = target.name;
-      this.events.emit('modal:next', { name });
-    });
-
-    this.container.addEventListener('input', event => {
-      const target = event.target as HTMLInputElement;
-      const field = target.name;
-      const value = target.value;
-      this.events.emit(`${field}:input`, { type: `${field}`, text: value })
-    });
-  }
-
-  /**
-   * Устанавливает доступность кнопки "Далее"
-   */
-  set valid(status: boolean) {
-    this.buttonNext.disabled = !status;
-  }
-
-  /**
-   * Покажет ошибки ввода
-   */
-  set errors(data: { address?: string }) {
-    for (let key in data) {
-      const field = this[`_${key}` as keyof OrderView] as HTMLInputElement;
-      field.setCustomValidity(data[key as keyof object]);
-    }
-    this.setText(this._errors, Object.values(data));
   }
 
   /**
