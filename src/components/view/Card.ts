@@ -1,3 +1,4 @@
+import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/events";
 
@@ -31,8 +32,11 @@ export class Card extends Component<ICard> {
 
   constructor(events: IEvents, container: HTMLElement) {
     super(events, container);
-    this._title = container.querySelector('.card__title');
-    this._price = container.querySelector('.card__price');
+    this._title = ensureElement('.card__title', container);
+    this._price = ensureElement('.card__price', container);
+    
+    //Здесь не используется ensureElement, т.к. так задумано,
+    //что класс будет работать с тем что есть, проверяя наличие
     this._image = container.querySelector('.card__image');
     this._category = container.querySelector('.card__category');
     this._description = container.querySelector('.card__text');
@@ -41,8 +45,11 @@ export class Card extends Component<ICard> {
     this.deleteButton = container.querySelector('.basket__item-delete');
 
     //В зависимости от шаблона:
-    //назначает слушателя на нажатие на карточку, кнопку покупки,
-    //кнопку удаления товара из корзины
+    //назначает слушателя на нажатие на карточку, кнопку покупки, кнопку удаления товара из корзины
+    if (container.classList.contains('gallery__item')) {
+      container
+        .addEventListener('click', () => this.events.emit('big:open', { id: this._id }));
+    }
     if (this.buyButton) {
       this.buyButton
         .addEventListener('click', () => this.events.emit('buy:click', { card: this, id: this._id }));
@@ -50,10 +57,6 @@ export class Card extends Component<ICard> {
     if (this.deleteButton) {
       this.deleteButton
         .addEventListener('click', () => this.events.emit('card:delete', { id: this._id }));
-    }
-    if (container.classList.contains('gallery__item')) {
-      container
-        .addEventListener('click', () => this.events.emit('big:open', { id: this._id }));
     }
   }
 
