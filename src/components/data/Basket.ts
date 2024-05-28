@@ -89,6 +89,7 @@ export class Basket implements IBasket {
    */
   clear(): void {
     this._items = [];
+    this.events.emit('basket:changed');
   }
 
   /**

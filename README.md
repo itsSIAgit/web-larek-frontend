@@ -25,9 +25,9 @@ https://github.com/itsSIAgit/web-larek-frontend.git
     - [Класс Page](#класс-page)
     - [Класс Popup](#класс-popup)
     - [Класс BasketView](#класс-basketview)
-    - [Класс OrderView](#класс-orderview)
-    - [Класс ContactsView](#класс-contactsview)
-    - [Класс SuccessView](#класс-successview)
+    - [Класс OrderForm](#класс-orderform)
+    - [Класс ContactsForm](#класс-contactsform)
+    - [Класс Success](#класс-success)
   - [Слой коммуникации](#слой-коммуникации)
     - [Класс ShopApi](#класс-shopapi)
 - [Взаимодействие компонентов](#взаимодействие-компонентов)
@@ -317,7 +317,7 @@ export type TApiPostData = {
 Методы класса:
 - сеттеры total, list, purchaseOpportunity
 
-#### Класс OrderView
+#### Класс OrderForm
 Готовит представление формы ввода базовых данных для заказа, из шаблона.
 
 Конструктор:
@@ -334,7 +334,7 @@ export type TApiPostData = {
 - сеттер `payment` - переключит состояния кнопок оплаты
 - сеттер `address` - заполнит поле адреса
 
-#### Класс ContactsView
+#### Класс ContactsForm
 Готовит представление форм ввода email-а и телефона, из шаблона.
 
 Конструктор:
@@ -350,7 +350,7 @@ export type TApiPostData = {
 - сеттер `email` - заполнит поле email
 - сеттер `phone` - заполнит поле телефон
 
-#### Класс SuccessView
+#### Класс Success
 Готовит представление успешного оформления (отправки на сервер) заказа, из шаблона.
 
 Конструктор:
@@ -360,11 +360,11 @@ export type TApiPostData = {
 
 Поля класса:
 - `events: IEvents` - экземпляр класса EventEmitter
-- `total: HTMLElement` - контейнер для суммы покупки
-- `_buttonFinish: HTMLButtonElement` - кнопка "За новыми покупками!"
+- `buttonNext: HTMLButtonElement` - кнопка "За новыми покупками!"
+- `_cost: HTMLElement` - контейнер для суммы покупки
 
 Методы класса:
-- `render (total: number)` - обновляет отображаемые данные и возвращает контейнер
+- сеттер `cost` - обновляет отображаемые данные
 
 
 ### Слой коммуникации

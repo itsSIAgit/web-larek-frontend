@@ -12,6 +12,7 @@ import { Popup } from './components/view/Popup';
 import { BasketView } from './components/view/BasketView';
 import { OrderForm } from './components/view/OrderForm';
 import { ContactsForm } from './components/view/ContactsForm';
+import { Success } from './components/view/Success';
 import { cloneTemplate } from './utils/utils';
 import './scss/styles.scss';
 
@@ -26,6 +27,7 @@ const modal = new Popup(events, document.getElementById(settings.modalContainerI
 const basketView = new BasketView(events, cloneTemplate(document.getElementById(settings.basketTemplate) as HTMLTemplateElement));
 const orderForm = new OrderForm(events, cloneTemplate(document.getElementById(settings.orderTemplate) as HTMLTemplateElement));
 const contactsForm = new ContactsForm(events, cloneTemplate(document.getElementById(settings.contactsTemplate) as HTMLTemplateElement));
+const success = new Success(events, cloneTemplate(document.getElementById(settings.successTemplate) as HTMLTemplateElement));
 const cardCatalogTemplate = document.getElementById(settings.cardCatalogTemplate);
 const cardPreviewTemplate = document.getElementById(settings.cardPreviewTemplate);
 const cardBasketTemplate = document.getElementById(settings.cardBasketTemplate);
@@ -114,22 +116,37 @@ events.on('big:open', (data: { id: string }) => {
 
 //Нажатие кнопок "Оформить", "Далее", "Оплатить", "За покупками" в формах
 events.on('modal:next', (data: { name: string }) => {
+  //Прим.: конструкция switch-case не дает задекларировать только нужные
+  //данные в кейсах, считая что они уже были, хотя и не могли
+  const { payment, email, phone, address } = info.getData();
   switch (data.name) {
     case 'basket':
-      const { payment, address } = info.getData();
       modal.content = orderForm.render({
         payment, address, valid: !!payment && !!address
       });
       break;
     case 'order':
-      const { email, phone } = info.getData();
       modal.content = contactsForm.render({
         email, phone, valid: !!email && !!phone
       });
       break;
-    case 'contacts': console.log('contacts'); //!==================
+    case 'contacts':
+      const total = basket.total();
+      const items = basket.items.map(item => item.id);
+      const postData = { payment, email, phone, address, total, items };
+      api.makePurchase(postData)
+        .then(res => {
+          console.info(res);
+          modal.content = success.render({ cost: total });
+          basket.clear();
+        })
+        .catch((err) => {
+          console.error(err);
+          alert(`Отправка заказа не удалась\n${err}`);
+        });
       break;
-    case 'success': console.log('success'); //!==================
+    case 'success':
+      modal.close();
   }
 });
 
