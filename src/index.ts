@@ -48,8 +48,6 @@ function cardDataBuilder(data: IProduct, preset: 'gallery' | 'big' | 'basket', p
   }
 }
 
-events.onAll(event => console.log(event)); //! Служебное
-
 //События изменения данных
 
 //Изменение каталога, и по сути первичная
@@ -88,8 +86,7 @@ events.on('info:changed', () => {
 
 //Нажатие кнопки купить в большой форме карточки (если доступна)
 events.on('buy:click', (data: { card: ICard, id: string }) => {
-  const { card } = data;
-  card.canBuy = 'no';
+  data.card.canBuy = 'no';
   basket.add(catalog.getProduct(data.id));
 });
 

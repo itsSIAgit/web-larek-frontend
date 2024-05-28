@@ -5,7 +5,9 @@ import { IEvents } from "../base/events";
 interface ISuccess {
   cost: number;
 }
-
+/**
+ * Готовит представление успешного оформления (отправки на сервер) заказа.
+ */
 export class Success extends Component<ISuccess> {
   protected events: IEvents;
   protected buttonNext: HTMLButtonElement;

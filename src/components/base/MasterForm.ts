@@ -12,6 +12,9 @@ export interface IMasterForm {
   phone: string;
 }
 
+/**
+ * Базовый абстрактный класс для форм ввода данных при оформлении заказа
+ */
 export abstract class MasterForm extends Component<IMasterForm> {
   protected buttonNext: HTMLButtonElement;
   protected _errors: HTMLElement;
