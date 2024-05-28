@@ -15,7 +15,6 @@ interface IModalData {
 export class Popup extends Component<IModalData>{
   protected closeButton: HTMLButtonElement;
   protected _content: HTMLElement;
-  // protected events: IEvents;
 
   constructor(events: IEvents, protected container: HTMLElement) {
     super(events, container);

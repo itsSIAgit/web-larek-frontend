@@ -21,7 +21,6 @@ export class Page extends Component<IPage> {
   protected _count: HTMLElement;
   protected scrollTop: number;
   protected scrollLeft: number;
-  // protected events: IEvents;
   
   constructor(events: IEvents, container: HTMLElement) {
     super(events, container);
