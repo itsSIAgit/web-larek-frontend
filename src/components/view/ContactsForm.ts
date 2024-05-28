@@ -5,7 +5,7 @@ import { IEvents } from "../base/events";
 /**
  * Представление формы ввода контактов для заказа
  */
-export class ContactsView extends MasterForm {
+export class ContactsForm extends MasterForm {
   protected _email: HTMLInputElement;
   protected _phone: HTMLInputElement;
 

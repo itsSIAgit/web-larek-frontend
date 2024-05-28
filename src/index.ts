@@ -10,8 +10,8 @@ import { Page } from './components/view/Page';
 import { Card, ICard } from './components/view/Card';
 import { Popup } from './components/view/Popup';
 import { BasketView } from './components/view/BasketView';
-import { OrderView } from './components/view/OrderView';
-import { ContactsView } from './components/view/ContactsView';
+import { OrderForm } from './components/view/OrderForm';
+import { ContactsForm } from './components/view/ContactsForm';
 import { cloneTemplate } from './utils/utils';
 import './scss/styles.scss';
 
@@ -24,8 +24,8 @@ const info = new PurchaseInfo(events, settings.infoStorageKey);
 const page = new Page(events, document.body);
 const modal = new Popup(events, document.getElementById(settings.modalContainerId))
 const basketView = new BasketView(events, cloneTemplate(document.getElementById(settings.basketTemplate) as HTMLTemplateElement));
-const orderView = new OrderView(events, cloneTemplate(document.getElementById(settings.orderTemplate) as HTMLTemplateElement));
-const contactsView = new ContactsView(events, cloneTemplate(document.getElementById(settings.contactsTemplate) as HTMLTemplateElement));
+const orderForm = new OrderForm(events, cloneTemplate(document.getElementById(settings.orderTemplate) as HTMLTemplateElement));
+const contactsForm = new ContactsForm(events, cloneTemplate(document.getElementById(settings.contactsTemplate) as HTMLTemplateElement));
 const cardCatalogTemplate = document.getElementById(settings.cardCatalogTemplate);
 const cardPreviewTemplate = document.getElementById(settings.cardPreviewTemplate);
 const cardBasketTemplate = document.getElementById(settings.cardBasketTemplate);
@@ -117,13 +117,13 @@ events.on('modal:next', (data: { name: string }) => {
   switch (data.name) {
     case 'basket':
       const { payment, address } = info.getData();
-      modal.content = orderView.render({
+      modal.content = orderForm.render({
         payment, address, valid: !!payment && !!address
       });
       break;
     case 'order':
       const { email, phone } = info.getData();
-      modal.content = contactsView.render({
+      modal.content = contactsForm.render({
         email, phone, valid: !!email && !!phone
       });
       break;
@@ -151,7 +151,7 @@ events.on(/^.+:input/, (data: { type: string, text: string }) => {
         return !!email && !!phone;
     }
   }
-  const putErr = (form: OrderView | ContactsView) => {
+  const putErr = (form: OrderForm | ContactsForm) => {
     form.valid = formValid();
     if (!text) form.errors = { [type]: settings.msg[type as keyof object] };
     else form.errors = { [type]: '' };
@@ -160,15 +160,15 @@ events.on(/^.+:input/, (data: { type: string, text: string }) => {
   info.setData({ [type]: text });
   switch (type) {
     case 'payment':
-      orderView.payment = text as TPayment;
-      orderView.valid = formValid();
+      orderForm.payment = text as TPayment;
+      orderForm.valid = formValid();
       break;
     case 'address':
-      putErr(orderView);
+      putErr(orderForm);
       break;
     case 'email':
     case 'phone':
-      putErr(contactsView);
+      putErr(contactsForm);
   }
 });
 

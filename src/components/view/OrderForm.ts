@@ -6,7 +6,7 @@ import { IEvents } from "../base/events";
 /**
  * Представление формы ввода базовых данных для заказа
  */
-export class OrderView extends MasterForm {
+export class OrderForm extends MasterForm {
   protected buttonCard: HTMLButtonElement;
   protected buttonCash: HTMLButtonElement;
   protected _address: HTMLInputElement;

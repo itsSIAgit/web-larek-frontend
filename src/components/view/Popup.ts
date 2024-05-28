@@ -5,14 +5,14 @@ import { IEvents } from "../base/events";
 /**
  * Интерфейс всплывающего окна
  */
-interface IModalData {
+interface IPopup {
   content: HTMLElement;
 }
 
 /**
  * Реализует основу модального окна.
  */
-export class Popup extends Component<IModalData>{
+export class Popup extends Component<IPopup>{
   protected closeButton: HTMLButtonElement;
   protected _content: HTMLElement;
 
@@ -62,7 +62,7 @@ export class Popup extends Component<IModalData>{
   /**
    * Вызывает родительский render и открывает окно
    */
-  render(data: IModalData): HTMLElement {
+  render(data: IPopup): HTMLElement {
     super.render(data);
     this.open();
     return this.container;
