@@ -1,5 +1,6 @@
 import { IApi, IProduct, TPayment } from './types';
 import { API_URL, CDN_URL, settings } from './utils/constants';
+import { cloneTemplate, ensureElement } from './utils/utils';
 import { Api } from './components/base/api';
 import { EventEmitter } from './components/base/events';
 import { ShopApi } from './components/connection/ShopApi';
@@ -13,24 +14,30 @@ import { BasketView } from './components/view/BasketView';
 import { OrderForm } from './components/view/OrderForm';
 import { ContactsForm } from './components/view/ContactsForm';
 import { Success } from './components/view/Success';
-import { cloneTemplate } from './utils/utils';
 import './scss/styles.scss';
 
+//Компоненты для создания событий, и связи с сервером
 const events = new EventEmitter();
 const baseApi = new Api(API_URL);
 const api = new ShopApi(baseApi as IApi);
+
+//Компоненты данных
 const catalog = new Catalog(events);
 const basket = new Basket(events, settings.basketStorageKey);
 const info = new PurchaseInfo(events, settings.infoStorageKey);
+
+//Компоненты представления
 const page = new Page(events, document.body);
-const modal = new Popup(events, document.getElementById(settings.modalContainerId))
-const basketView = new BasketView(events, cloneTemplate(document.getElementById(settings.basketTemplate) as HTMLTemplateElement));
-const orderForm = new OrderForm(events, cloneTemplate(document.getElementById(settings.orderTemplate) as HTMLTemplateElement));
-const contactsForm = new ContactsForm(events, cloneTemplate(document.getElementById(settings.contactsTemplate) as HTMLTemplateElement));
-const success = new Success(events, cloneTemplate(document.getElementById(settings.successTemplate) as HTMLTemplateElement));
-const cardCatalogTemplate = document.getElementById(settings.cardCatalogTemplate);
-const cardPreviewTemplate = document.getElementById(settings.cardPreviewTemplate);
-const cardBasketTemplate = document.getElementById(settings.cardBasketTemplate);
+const modal = new Popup(events, ensureElement(settings.modalContainer))
+const basketView = new BasketView(events, cloneTemplate(ensureElement<HTMLTemplateElement>(settings.basketTemplate)));
+const orderForm = new OrderForm(events, cloneTemplate(ensureElement<HTMLTemplateElement>(settings.orderTemplate)));
+const contactsForm = new ContactsForm(events, cloneTemplate(ensureElement<HTMLTemplateElement>(settings.contactsTemplate)));
+const success = new Success(events, cloneTemplate(ensureElement<HTMLTemplateElement>(settings.successTemplate)));
+
+//Переиспользуемые шаблоны
+const cardCatalogTemplate = ensureElement(settings.cardCatalogTemplate);
+const cardPreviewTemplate = ensureElement(settings.cardPreviewTemplate);
+const cardBasketTemplate = ensureElement(settings.cardBasketTemplate);
 
 /**
  * Подготавливает набор данных для рендера
@@ -62,9 +69,8 @@ events.on('goods:changed', () => {
 });
 
 //Изменение данных корзины:
-//- загрузка с локального хранилища
-//- добавление по кнопке из большой формы
-//- удаление по кнопке карточки в форме корзины
+//загрузка с локального хранилища, добавление по кнопке из большой формы,
+//удаление по кнопке карточки в форме корзины, очистка корзины
 events.on('basket:changed', () => {
   basket.save();
   page.count = basket.goodsCount();
@@ -151,6 +157,7 @@ events.on('modal:next', (data: { name: string }) => {
 //События изменения данных из-за действий пользователя
 //При вводе в поля форм, и нажатия кнопок "Онлайн" и "При получении"
 //Кнопки способа оплаты на форме тоже считаются элементом ввода
+//Выводит ошибки ввода на форме, если они есть
 events.on(/^.+:input/, (data: { type: string, text: string }) => {
   const { type, text } = data;
   const formValid = () => {

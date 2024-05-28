@@ -8,15 +8,15 @@ export const API_URL = `${process.env.API_ORIGIN}/api/weblarek`;
 export const CDN_URL = `${process.env.API_ORIGIN}/content/weblarek`;
 
 export const settings = {
-  cardCatalogTemplate: 'card-catalog',
-  cardPreviewTemplate: 'card-preview',
-  cardBasketTemplate: 'card-basket',
-  basketTemplate: 'basket',
-  orderTemplate: 'order',
-  contactsTemplate: 'contacts',
-  successTemplate: 'success',
+  cardCatalogTemplate: '#card-catalog',
+  cardPreviewTemplate: '#card-preview',
+  cardBasketTemplate: '#card-basket',
+  basketTemplate: '#basket',
+  orderTemplate: '#order',
+  contactsTemplate: '#contacts',
+  successTemplate: '#success',
   
-  modalContainerId: 'modal-container',
+  modalContainer: '#modal-container',
   
   typeSelector: {
     'софт-скил': 'card__category_soft',
