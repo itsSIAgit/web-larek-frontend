@@ -42,6 +42,6 @@ export class OrderForm extends MasterForm {
    * Заполнит поле адреса
    */
   protected set address(data: string) {
-    if (data) this._address.value = String(data);
+    this._address.value = data ? String(data) : '';
   }
 }

@@ -20,13 +20,13 @@ export class ContactsForm extends MasterForm {
    * Заполнит поле email
    */
   protected set email(data: string) {
-    if (data) this._email.value = String(data);
+    this._email.value = data ? String(data) : '';
   }
 
   /**
    * Заполнит поле телефон
    */
   protected set phone(data: string) {
-    if (data) this._phone.value = String(data);
+    this._phone.value = data ? String(data) : '';
   }
 }
