@@ -34,6 +34,15 @@ export class Catalog implements ICatalog {
   }
 
   /**
+   * Проверить продукт на бесценность\
+   * Вернет 'inf' или null
+   */
+  pricelessProduct(id: string): 'inf' | null {
+    const item = this._items.find(item => item.id === id);
+    return item.price === null ? 'inf' : null
+  }
+
+  /**
    * Возвращает ссылку на массив товаров каталога
    */
   getGoods(): IProduct[] {

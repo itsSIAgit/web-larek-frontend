@@ -198,7 +198,7 @@ export type TApiPostData = {
 - `add (product: IProduct): void` - добавляет товар в массив корзины и вызывает событие изменения массива корзины
 - `remove (id: string): void` - удаляет товар из массива корзины и вызывает событие изменения массива корзины
 - `purchaseOpportunity (): boolean` - проверить возможна ли покупка
-- `haveProduct (id: string): boolean` - проверить, есть ли товар в корзине
+- `notIn(id: string): 'yes' | 'no'` - проверить, нет ли товара в корзине
 - `goodsCount (): number` - узнать сколько товаров в корзине
 - `total (): number` - узнать стоимость товаров в корзине 
 - `clear (): void` - очистить корзину от товаров
@@ -222,7 +222,7 @@ export type TApiPostData = {
 - `setData(data: Partial<TPurchaseData>): void` - записывает значения полей и вызывает событие изменения данных
 - `getData(): TPurchaseData` - возвращает все данные для покупки
 - `clear(): void` - очищает данные покупателя
-- `checkValid(data: string[]): boolean` - проверяет значение в данных на валидность
+- `checkValid()` - проверяет значение в данных на валидность
 
 
 ### Слой представления

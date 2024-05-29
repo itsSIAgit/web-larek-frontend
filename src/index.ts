@@ -40,22 +40,6 @@ const cardPreviewTemplate = ensureElement(settings.cardPreviewTemplate);
 const cardBasketTemplate = ensureElement(settings.cardBasketTemplate);
 
 /**
- * Подготавливает набор данных для рендера
- * карточки товара, в зависимости от типа
- */
-// function cardDataBuilder(data: IProduct, preset: 'gallery' | 'big' | 'basket', position?: number) {
-//   let { id, title, price, image, category, description } = data;
-//   const type = settings.typeSelector[category as keyof object];
-//   const canBuy = price === null ? 'inf' : basket.haveProduct(id) ? 'no' : 'yes';
-//   image = CDN_URL + image;
-//   switch (preset) {
-//     case 'gallery': return { id, title, price, image, category, type };
-//     case 'big': return { id, title, price, image, category, type, description, canBuy };
-//     case 'basket': return { id, title, price, position };
-//   }
-// }
-
-/**
  * Обновляет вид содержимого корзины
  */
 function renderActualBasket() {
@@ -70,6 +54,7 @@ function renderActualBasket() {
     purchaseOpportunity: basket.purchaseOpportunity()
   });
 }
+
 
 //События изменения данных
 
@@ -91,22 +76,8 @@ events.on('goods:changed', () => {
 //удаление по кнопке карточки в форме корзины, очистка корзины
 events.on('basket:changed', () => {
   basket.save();
-  // page.count = basket.goodsCount();
   page.render({ count: basket.goodsCount() });
   renderActualBasket();
-  // const basketArr = basket.items.map((productData, position) => {
-  //   const card = new Card(events, cloneTemplate(cardBasketTemplate as HTMLTemplateElement));
-  //   // return card.render(cardDataBuilder(productData, 'basket', position + 1));
-  //   const { id, title, price } = productData;
-  //   return card.render({ id, title, price, position: ++position });
-
-  // })
-  // // console.log(basket.items)
-  // basketView.render({
-  //   list: basketArr,
-  //   total: basket.total(),
-  //   purchaseOpportunity: basket.purchaseOpportunity()
-  // });
 });
 
 //При изменении данных для оформления покупки
@@ -116,7 +87,6 @@ events.on('info:changed', () => {
 
 //Нажатие кнопки купить в большой форме карточки (если доступна)
 events.on('buy:click', (data: { card: Card, id: string }) => {
-  // data.card.canBuy = 'no';
   data.card.render({ canBuy: 'no' })
   basket.add(catalog.getProduct(data.id));
 });
@@ -141,69 +111,27 @@ events.on('basket:open', () => {
 //Нажатие на карточку для открытия большого окна
 events.on('big:open', (data: { id: string }) => {
   const card = new Card(events, cloneTemplate(cardPreviewTemplate as HTMLTemplateElement));
-  // modal.render({ content: card.render(cardDataBuilder(catalog.getProduct(data.id), 'big')) });
   const product = catalog.getProduct(data.id);
   const { id, title, price, image, category, description } = product;
   const type = settings.typeSelector[category as keyof object];
-  const canBuy = price === null ? 'inf' : basket.haveProduct(id) ? 'no' : 'yes'; //! =====
+  const canBuy = catalog.pricelessProduct(id) ?? basket.notIn(id);
   const content = card.render({ id, title, price, image, category, type, description, canBuy });
   modal.render({ content });
   modal.open();
 });
 
 //Нажатие кнопок "Оформить", "Далее", "Оплатить", "За покупками" в формах
-// events.on('modal:next', (data: { name: string }) => {
-  //Прим.: конструкция switch-case не дает задекларировать только нужные
-  //данные в кейсах, считая что они уже были, хотя и не могли
-  // const { payment, email, phone, address } = info.getData();
-  // switch (data.name) {
-    // case 'basket':
-    //   // modal.content = orderForm.render({
-    //   //   payment, address, valid: !!payment && !!address
-    //   // });
-    //   const content = orderForm.render({
-    //     payment, address, valid: !!payment && !!address
-    //   });
-    //   modal.render({ content });
-    //   modal.open();
-    //   break;
-    // case 'order':
-    //   modal.content = contactsForm.render({
-    //     email, phone, valid: !!email && !!phone
-    //   });
-
-    //   break;
-    // case 'contacts':
-    //   const total = basket.total();
-    //   const items = basket.items.map(item => item.id);
-    //   const postData = { payment, email, phone, address, total, items };
-    //   api.makePurchase(postData)
-    //     .then(res => {
-    //       console.info(res);
-    //       modal.content = success.render({ cost: total });
-    //       basket.clear();
-    //       info.clear();
-    //     })
-    //     .catch((err) => {
-    //       console.error(err);
-    //       alert(`Отправка заказа не удалась\n${err}`);
-    //     });
-    //   break;
-  //   case 'success':
-  //     modal.close();
-  // }
-// });
 
 events.on('basket:next', () => {
   const { payment, address } = info.getData();
-  const valid = info.checkValid(['payment', 'address']);
+  const { valid } = info.checkValid(['payment', 'address']);
   const content = orderForm.render({ payment, address, valid });
   modal.render({ content });
 });
 
 events.on('order:next', () => {
   const { email, phone } = info.getData();
-  const valid = info.checkValid(['email', 'phone']);
+  const { valid } = info.checkValid(['email', 'phone']);
   const content = contactsForm.render({ email, phone, valid });
   modal.render({ content });
 });
@@ -233,84 +161,44 @@ events.on('success:next', () => {
 
 
 //События изменения данных из-за действий пользователя
-//При вводе в поля форм, и нажатия кнопок "Онлайн" и "При получении"
-//Кнопки способа оплаты на форме тоже считаются элементом ввода
-//Выводит ошибки ввода на форме, если они есть
-// events.on(/^.+:input/, (data: { type: string, text: string }) => {
-  // const { type, text } = data;
-  // const formValid = () => {
-  //   switch (type) {
-  //     case 'payment':
-  //     case 'address':
-  //       const { payment, address } = info.getData();
-  //       return !!payment && !!address;
-  //     case 'email':
-  //     case 'phone':
-  //       const { email, phone } = info.getData();
-  //       return !!email && !!phone;
-  //   }
-  // }
-  // const putErr = (form: OrderForm | ContactsForm) => {
-  //   form.valid = formValid();
-  //   if (!text) form.errors = { [type]: settings.msg[type as keyof object] };
-  //   else form.errors = { [type]: '' };
-  // }
-
-  // info.setData({ [type]: text });
-  // switch (type) {
-  //   case 'payment':
-  //     orderForm.payment = text as TPayment;
-  //     orderForm.valid = formValid();
-  //     break;
-  //   case 'address':
-  //     putErr(orderForm);
-  //     break;
-  //   case 'email':
-  //   case 'phone':
-  //     putErr(contactsForm);
-  // }
-// });
+//При нажатия кнопок "Онлайн" и "При получении"
 
 events.on('payment:click', ({ payment }: { payment: TPayment }) => {
   info.setData({ payment });
-  const valid = info.checkValid(['payment', 'address']);
+  const { valid } = info.checkValid(['payment', 'address']);
   orderForm.render({ payment, valid })
 });
 
+//При вводе в поля форм
 //Логика проверки input-ов в том чтобы вывести ошибку
 //конкретного, и только тогда когда пользователь что-то ввёл/стёр,
 //а кнопку формы блокировать до тех пор пока все поля не будут валидны
 
 events.on('address:input', ({ address }: { address: string }) => {
   info.setData({ address });
-  const valid = info.checkValid(['payment', 'address']);
-  const errorText = info.checkValid(['address']) ? '' : settings.msg.address;
-  orderForm.render({ valid, errors: { address: errorText } })
+  const { valid, errors } = info.checkValid(['payment', 'address']);
+  orderForm.render({ valid, errors })
 });
 
 events.on('email:input', ({ email }: { email: string }) => {
   info.setData({ email });
-  const valid = info.checkValid(['email', 'phone']);
-  const errorText = info.checkValid(['email']) ? '' : settings.msg.email;
-  contactsForm.render({ valid, errors: { email: errorText } })
+  const { valid, errors } = info.checkValid(['email', 'phone']);
+  contactsForm.render({ valid, errors })
 });
 
 events.on('phone:input', ({ phone }: { phone: string }) => {
   info.setData({ phone });
-  const valid = info.checkValid(['email', 'phone']);
-  const errorText = info.checkValid(['phone']) ? '' : settings.msg.phone;
-  contactsForm.render({ valid, errors: { phone: errorText } })
+  const { valid, errors } = info.checkValid(['email', 'phone']);
+  contactsForm.render({ valid, errors })
 });
 
 //Блокировка прокрутки страницы если открыто окно
 events.on('modal:open', () => {
-  // page.locked = true;
   page.render({ locked: true });
 });
 
 //Разблокировка
 events.on('modal:close', () => {
-  // page.locked = false;
   page.render({ locked: false });
 });
 

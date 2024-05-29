@@ -7,17 +7,22 @@ import { IEvents } from "../base/events";
 export class PurchaseInfo implements IPurchaseInfo {
   protected events: IEvents;
   protected infoKey: string;
-  protected purchaseData: TPurchaseData;
+  protected purchaseData: TPurchaseData = {
+    payment: null,
+    email: null,
+    phone: null,
+    address: null
+  };
+  protected msg: object = {
+    'payment': 'Нужно выбрать способ оплаты.',
+    'address': 'Нужно ввести адрес.',
+    'email': 'Нужно ввести email.',
+    'phone': 'Нужно ввести телефон.'
+  };
 
   constructor(events: IEvents, infoKey: string) {
     this.events = events;
     this.infoKey = infoKey;
-    this.purchaseData = {
-      payment: null,
-      email: '',
-      phone: '',
-      address: ''
-    }
   }
 
   /**
@@ -68,9 +73,9 @@ export class PurchaseInfo implements IPurchaseInfo {
   clear(): void {
     this.purchaseData = {
       payment: null,
-      email: '',
-      phone: '',
-      address: ''
+      email: null,
+      phone: null,
+      address: null
     }
     this.events.emit('info:changed');
   }
@@ -78,7 +83,23 @@ export class PurchaseInfo implements IPurchaseInfo {
   /**
    * Проверяет запрашиваемые поля на валидность
    */
-  checkValid(data: string[]): boolean {
-    return !data.some(item => !this.purchaseData[item as keyof object]);
+  checkValid(data: (keyof TPurchaseData)[]): { valid: boolean, errors: Map<string, string> } {
+    const errors = new Map<string, string>();
+    let valid = true;
+    data.forEach(name => {
+      //Если значение null, то значит пользователь еще не трогал поле и об ошибке сообщать рано
+      if (this.purchaseData[name as keyof object] === null) {
+        valid = false;
+      } else {
+        if (this.purchaseData[name as keyof object] === '') {
+          errors.set(name as keyof object, this.msg[name as keyof object] + ' ');
+          valid = false;
+        } else {
+          //Пустое значение нужно чтобы убрать подсветку поля
+          errors.set(name as keyof object, '');
+        }
+      }
+    });
+    return { valid, errors }
   }
 }

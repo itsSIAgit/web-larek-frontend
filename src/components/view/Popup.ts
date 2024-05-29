@@ -60,15 +60,6 @@ export class Popup extends Component<IPopup>{
   }
 
   /**
-   * Вызывает родительский render и открывает окно
-   */
-  // render(data: IPopup): HTMLElement {
-  //   super.render(data);
-  //   // this.open();
-  //   return this.container;
-  // }
-
-  /**
    * Устанавливает содержимое окна
    */
   protected set content(fill: HTMLElement) {

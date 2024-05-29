@@ -16,6 +16,7 @@ export interface IProduct {
 export interface ICatalog {
   setGoods(items: IProduct[], CDN_URL: string): void;
   getProduct(id: string): IProduct | null;
+  pricelessProduct(id: string): 'inf' | null;
 }
 
 /**
@@ -27,7 +28,7 @@ export interface IBasket {
   add(product: IProduct): void;
   remove(id: string): void;
   purchaseOpportunity(): boolean;
-  haveProduct(id: string): boolean;
+  notIn(id: string): 'yes' | 'no';
   goodsCount(): number;
   total(): number;
   clear(): void;
@@ -41,6 +42,8 @@ export interface IPurchaseInfo {
   load(): void;
   setData(data: Partial<TPurchaseData>): void;
   getData(): TPurchaseData;
+  clear(): void;
+  checkValid(data: (keyof TPurchaseData)[]): { valid: boolean, errors: Map<string, string> };
 }
 
 /**

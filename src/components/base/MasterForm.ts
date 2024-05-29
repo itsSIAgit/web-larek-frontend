@@ -4,11 +4,7 @@ import { Component } from "./Component";
 import { IEvents } from "./events";
 
 export interface IMasterForm {
-  errors: {
-    address?: string,
-    email?: string,
-    phone?: string
-  };
+  errors: Map<string, string>
   valid: boolean;
   payment: TPayment;
   address: string;
@@ -31,7 +27,6 @@ export abstract class MasterForm extends Component<IMasterForm> {
       const target = event.target as HTMLInputElement;
       const field = target.name;
       const value = target.value;
-      // this.events.emit(`${field}:input`, { type: `${field}`, text: value })
       this.events.emit(`${field}:input`, { [field]: value })
     });
 
@@ -53,11 +48,15 @@ export abstract class MasterForm extends Component<IMasterForm> {
   /**
    * Покажет ошибки ввода
    */
-  protected set errors(data: { address?: string, email?: string, phone?: string }) {
-    for (let key in data) {
-      const field = this[`_${key}` as keyof object] as HTMLInputElement;
-      field.setCustomValidity(data[key as keyof object]);
-    }
-    this.setText(this._errors, Object.values(data));
+  protected set errors(data: Map<string, string>) {
+    let errText = '';
+    data.forEach((err, key) => {
+      if (this[`_${key}` as keyof object]) {
+        const field = this[`_${key}` as keyof object] as HTMLInputElement;
+        field.setCustomValidity(err);
+        errText += err;
+      }
+    })
+    this.setText(this._errors, errText);
   }
 }

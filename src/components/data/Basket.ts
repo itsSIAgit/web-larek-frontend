@@ -64,10 +64,11 @@ export class Basket implements IBasket {
   }
 
   /**
-   * Проверить, есть ли товар в корзине
+   * Проверить, нет ли товара в корзине\
+   * Вернет 'yes' или 'no'
    */
-  haveProduct(id: string): boolean {
-    return this._items.some(item => item.id === id);
+  notIn(id: string): 'yes' | 'no' {
+    return this._items.some(item => item.id === id) ? 'no' : 'yes';
   }
 
   /**
