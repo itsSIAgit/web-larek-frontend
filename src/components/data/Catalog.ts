@@ -16,9 +16,12 @@ export class Catalog implements ICatalog {
    * Записывает значения массива продуктов
    * и вызывает событие изменения массива каталога
    */
-  setGoods(items: IProduct[]): void {
+  setGoods(items: IProduct[], CDN_URL: string): void {
     if (items) {
-      this._items = items;
+      this._items = items.map(item => {
+        item.image = CDN_URL + item.image;
+        return item;
+      });
       this.events.emit('goods:changed');
     }
   }
@@ -33,7 +36,7 @@ export class Catalog implements ICatalog {
   /**
    * Возвращает ссылку на массив товаров каталога
    */
-  get items(): IProduct[] {
+  getGoods(): IProduct[] {
     return this._items;
   }
 }

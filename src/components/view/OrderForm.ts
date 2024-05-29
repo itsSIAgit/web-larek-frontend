@@ -19,26 +19,29 @@ export class OrderForm extends MasterForm {
     this._address = ensureElement<HTMLInputElement>('input[name=address]', this.container);
 
     this.buttonCard.addEventListener('click', () =>
-        this.events.emit('payment:input', { type: 'payment', text: 'online' }));
+        this.events.emit('payment:click', { payment: 'online' }));
     this.buttonCash.addEventListener('click', () =>
-        this.events.emit('payment:input', { type: 'payment', text: 'physically' }));
+        this.events.emit('payment:click', { payment: 'physically' }));
   }
 
   /**
    * Переключит состояния кнопок оплаты
    */
-  set payment(data: TPayment) {
+  protected set payment(data: TPayment) {
     if (data) {
       const status = data === 'online';
       this.toggleClass(this.buttonCard, 'button_alt-active', status);
       this.toggleClass(this.buttonCash, 'button_alt-active', !status);
+    } else {
+      this.toggleClass(this.buttonCard, 'button_alt-active', false);
+      this.toggleClass(this.buttonCash, 'button_alt-active', false);
     }
   }
 
   /**
    * Заполнит поле адреса
    */
-  set address(data: string) {
+  protected set address(data: string) {
     this._address.value = String(data);
   }
 }

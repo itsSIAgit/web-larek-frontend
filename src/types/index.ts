@@ -14,7 +14,7 @@ export interface IProduct {
  * Интерфейс каталога товаров
  */
 export interface ICatalog {
-  setGoods(items: IProduct[]): void;
+  setGoods(items: IProduct[], CDN_URL: string): void;
   getProduct(id: string): IProduct | null;
 }
 

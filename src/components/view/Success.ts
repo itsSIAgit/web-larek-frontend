@@ -19,10 +19,10 @@ export class Success extends Component<ISuccess> {
     this.buttonNext = ensureElement<HTMLButtonElement>('.button', this.container);
 
     this.buttonNext.addEventListener('click', () =>
-    this.events.emit('modal:next', { name: 'success' }));
+    this.events.emit('success:next'));
   }
 
-  set cost(data: number) {
+  protected set cost(data: number) {
     this.setText(this._cost, `Списано ${data} синапсов`);
   }
 }

@@ -4,7 +4,11 @@ import { Component } from "./Component";
 import { IEvents } from "./events";
 
 export interface IMasterForm {
-  errors: string;
+  errors: {
+    address?: string,
+    email?: string,
+    phone?: string
+  };
   valid: boolean;
   payment: TPayment;
   address: string;
@@ -27,28 +31,29 @@ export abstract class MasterForm extends Component<IMasterForm> {
       const target = event.target as HTMLInputElement;
       const field = target.name;
       const value = target.value;
-      this.events.emit(`${field}:input`, { type: `${field}`, text: value })
+      // this.events.emit(`${field}:input`, { type: `${field}`, text: value })
+      this.events.emit(`${field}:input`, { [field]: value })
     });
 
     this.container.addEventListener('submit', event => {
       event.preventDefault();
       const target = event.target as HTMLFormElement;
       const name = target.name;
-      this.events.emit('modal:next', { name });
+      this.events.emit(`${name}:next`);
     });
   }
 
   /**
    * Устанавливает доступность кнопки продолжения
    */
-  set valid(status: boolean) {
+  protected set valid(status: boolean) {
     this.buttonNext.disabled = !status;
   }
 
   /**
    * Покажет ошибки ввода
    */
-  set errors(data: { address?: string, email?: string, phone?: string }) {
+  protected set errors(data: { address?: string, email?: string, phone?: string }) {
     for (let key in data) {
       const field = this[`_${key}` as keyof object] as HTMLInputElement;
       field.setCustomValidity(data[key as keyof object]);

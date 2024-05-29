@@ -35,21 +35,21 @@ export class Page extends Component<IPage> {
   /**
    * Обновляет отображение каталога и возвращает контейнер с плиткой карточек
    */
-  set gallery(items: HTMLElement[]) {
+  protected set gallery(items: HTMLElement[]) {
     if (items) this._gallery.replaceChildren(...items);
   }
 
   /**
    * Обновляет счетчик числа товаров в корзине
    */
-  set count(data: number) {
+  protected set count(data: number) {
     this._count.textContent = String(data);
   }
 
   /**
    * Блокировка прокрутки страницы
    */
-  set locked(value: boolean) {
+  protected set locked(value: boolean) {
     //Т.к. из-за установки класса страница улетает в начало,
     //то при блокировке запоминаем где был скролл, а после восстанавливаем
     if (value) {

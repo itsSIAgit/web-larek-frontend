@@ -62,51 +62,51 @@ export class Card extends Component<ICard> {
 
   //Сеттеры отрабатывают при вызове render() родительского класса
 
-  set id(data: string) {
+  protected set id(data: string) {
     this._id = data ? data : '';
   }
 
-  set title(data: string) {
+  protected set title(data: string) {
     if (this._title) this.setText(this._title, data);
   }
 
-  set price(data: number) {
+  protected set price(data: number) {
     if (this._price) {
       const price = data ? data + ' синапсов' : 'Бесценно';
       this.setText(this._price, price);
     }
   }
 
-  set image(data: string) {
+  protected set image(data: string) {
     if (this._image) this.setImage(this._image, data, this._title.textContent);
   }
 
-  set category(data: string) {
+  protected set category(data: string) {
     if (this._category) this.setText(this._category, data);
   }
 
-  set type(typeSelector: string) {
+  protected set type(typeSelector: string) {
     if (this._category) {
       this._category.classList.value = 'card__category';
       this._category.classList.add(typeSelector);
     }
   }
 
-  set description(data: string) {
+  protected set description(data: string) {
     if (this._description) this.setText(this._description, data);
   }
 
-  set position(data: number) {
+  protected set position(data: number) {
     if (this._position) this.setText(this._position, data);
   }
 
-  set canBuy(status: string) {
+  protected set canBuy(status: string) {
     if (this.buyButton) {
       this.setDisabled(this.buyButton, status !== 'yes');
       switch (status) {
         case 'inf': this.setText(this.buyButton, 'Бесценно');
         break;
-        case 'no': this.setText(this.buyButton, 'В козине');
+        case 'no': this.setText(this.buyButton, 'В корзине');
         break;
         default: this.setText(this.buyButton, 'Купить')
       }

@@ -24,27 +24,28 @@ export class BasketView extends Component<IBasketView> {
     this._list = ensureElement<HTMLElement>('.basket__list', container);
 
     this._purchaseButton.addEventListener('click', () =>
-        this.events.emit('modal:next', { name: 'basket' }));
+        // this.events.emit('modal:next', { name: 'basket' }));
+        this.events.emit('basket:next'));
   }
   
   /**
    * Устанавливает стоимость покупки
    */
-  set total(data: number) {
+  protected set total(data: number) {
     this.setText(this._total, data ? data + ' синапсов' : 'Пусто');
   }
 
   /**
    * Устанавливает доступность кнопки оформления покупки
    */
-  set purchaseOpportunity(status: boolean) {
+  protected set purchaseOpportunity(status: boolean) {
     this.setDisabled(this._purchaseButton, !status);
   }
 
   /**
    * Обновляет карточки товаров
    */
-  set list(fill: HTMLElement[]) {
+  protected set list(fill: HTMLElement[]) {
     this._list.replaceChildren();
     if (fill) this._list.replaceChildren(...fill);
   }

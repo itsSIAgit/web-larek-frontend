@@ -19,14 +19,14 @@ export class ContactsForm extends MasterForm {
   /**
    * Заполнит поле email
    */
-  set email(data: string) {
+  protected set email(data: string) {
     this._email.value = String(data);
   }
 
   /**
    * Заполнит поле телефон
    */
-  set phone(data: string) {
+  protected set phone(data: string) {
     this._phone.value = String(data);
   }
 }

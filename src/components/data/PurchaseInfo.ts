@@ -61,4 +61,24 @@ export class PurchaseInfo implements IPurchaseInfo {
   getData(): TPurchaseData {
     return this.purchaseData;
   }
+
+  /**
+   * Очищает данные пользователя
+   */
+  clear(): void {
+    this.purchaseData = {
+      payment: null,
+      email: '',
+      phone: '',
+      address: ''
+    }
+    this.events.emit('info:changed');
+  }
+
+  /**
+   * Проверяет запрашиваемые поля на валидность
+   */
+  checkValid(data: string[]): boolean {
+    return !data.some(item => !this.purchaseData[item as keyof object]);
+  }
 }
