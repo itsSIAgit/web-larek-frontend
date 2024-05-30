@@ -1,4 +1,4 @@
-import { IApi, IProduct, TPayment } from './types';
+import { IApi, TPayment } from './types';
 import { API_URL, CDN_URL, settings } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 import { Api } from './components/base/api';
@@ -87,8 +87,8 @@ events.on('info:changed', () => {
 
 //Нажатие кнопки купить в большой форме карточки (если доступна)
 events.on('buy:click', (data: { card: Card, id: string }) => {
-  data.card.render({ canBuy: 'no' })
   basket.add(catalog.getProduct(data.id));
+  data.card.render({ canBuy: basket.notIn(data.id) });
 });
 
 //Нажатие иконки мусорки в форме корзины
@@ -137,6 +137,7 @@ events.on('order:next', () => {
 });
 
 events.on('contacts:next', () => {
+  contactsForm.render({ buttonLock: true });
   const total = basket.total();
   const items = basket.items.map(item => item.id);
   const { payment, address, email, phone } = info.getData();
@@ -152,7 +153,8 @@ events.on('contacts:next', () => {
     .catch((err) => {
       console.error(err);
       alert(`Отправка заказа не удалась\n${err}`);
-    });
+    })
+    .finally(() => contactsForm.render({ buttonLock: false }));
 });
 
 events.on('success:next', () => {

@@ -10,6 +10,7 @@ export interface IMasterForm {
   address: string;
   email: string;
   phone: string;
+  buttonLock: boolean;
 }
 
 /**

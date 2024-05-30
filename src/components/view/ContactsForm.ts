@@ -29,4 +29,14 @@ export class ContactsForm extends MasterForm {
   protected set phone(data: string) {
     this._phone.value = data ? String(data) : '';
   }
+
+  /**
+   * Заблокирует кнопку оплаты, при
+   * отправке на сервер, и поменяет ее текст
+   */
+  protected set buttonLock(status: boolean) {
+    this.setDisabled(this.buttonNext, status);
+    status ? this.setText(this.buttonNext, 'Отправка...') :
+              this.setText(this.buttonNext, 'Оплатить');
+  }
 }

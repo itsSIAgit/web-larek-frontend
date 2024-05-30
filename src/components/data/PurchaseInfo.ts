@@ -1,4 +1,4 @@
-import { IPurchaseInfo, TPayment, TPurchaseData } from "../../types";
+import { IPurchaseInfo, TPurchaseData } from "../../types";
 import { IEvents } from "../base/events";
 
 /**
